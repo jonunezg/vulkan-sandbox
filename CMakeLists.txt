@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.15)
+project(vulkan CXX)
+
+find_package(glm REQUIRED)
+find_package(GLFW3 REQUIRED)
+find_package(VulkanHeaders REQUIRED)
+find_package(VulkanLoader REQUIRED)
+
+add_executable(${PROJECT_NAME}
+                src/main.cpp
+                src/engine/VulkanManager.cpp)
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${glfw3_INCLUDE_DIRS})
+
+target_link_libraries(${PROJECT_NAME} glm::glm)
+target_link_libraries(${PROJECT_NAME} ${glfw3_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} vulkan-headers::vulkan-headers)
+target_link_libraries(${PROJECT_NAME} ${VulkanLoader_LIBRARIES})
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
+
+# Move Vulkan debug config file
+add_custom_command(
+TARGET ${PROJECT_NAME} POST_BUILD
+COMMAND ${CMAKE_COMMAND} -E copy
+${CMAKE_SOURCE_DIR}/src/engine/vk_layer_settings.txt
+$<TARGET_FILE_DIR:${PROJECT_NAME}>
+)
