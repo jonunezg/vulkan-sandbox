@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#include "utils.h"
+#include "Utilities.h"
 
 class VulkanManager
 {
