@@ -2,12 +2,15 @@
 
 #include <vector>
 
+#include "Utilities.h"
 #include "VulkanIncludes.h"
+
+class VulkanInstance;
 
 class VulkanLogger
 {
 public:
-    VulkanLogger(VkInstance instance);
+    VulkanLogger(std::shared_ptr<VulkanInstance> instance);
 
     static const VkDebugUtilsMessengerCreateInfoEXT *getDebuggerMessengerInfo();
 
@@ -17,6 +20,5 @@ public:
 
 private:
     VkDebugUtilsMessengerEXT m_debugMessenger;
-    // TODO: Wrap instance and probably do shared_ptr to ensure lifetime
-    VkInstance m_instance;
+    const std::shared_ptr<VulkanInstance> m_instance;
 };

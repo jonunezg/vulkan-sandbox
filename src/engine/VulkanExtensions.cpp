@@ -45,3 +45,20 @@ void addDebugExtensions(std::vector<const char *>& extensions)
         dumpRequiredExtensions(extensions);
     }
 }
+
+std::vector<const char *> getExtensions()
+{
+    uint32_t glfwExtensionsCount;
+    const auto glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionsCount);
+
+    if (!glfwExtensions)
+    {
+        throw std::runtime_error("GLFW returned empty list of Vulkan extensions");
+    }
+
+    std::vector<const char *> extensions = { glfwExtensions, glfwExtensions + glfwExtensionsCount };
+
+    addDebugExtensions(extensions);
+
+    return extensions;
+}

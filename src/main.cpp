@@ -90,17 +90,12 @@ class HelloTriangleApplication
 public:
     void run()
     {
-        init();
         std::cout << BLUE << "Application started successfully" << RESET << std::endl;
         mainLoop();
         cleanup();
     }
 
 private:
-    void init()
-    {
-        m_vulkanManager.initVulkan();
-    }
 
     void mainLoop()
     {    
