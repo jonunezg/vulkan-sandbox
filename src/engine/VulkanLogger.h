@@ -4,8 +4,7 @@
 
 #include "Utilities.h"
 #include "VulkanIncludes.h"
-
-class VulkanInstance;
+#include "VulkanInstance.h"
 
 class VulkanLogger
 {

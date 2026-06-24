@@ -1,6 +1,5 @@
 
 #include "VulkanLogger.h"
-#include "VulkanInstance.h"
 
 // Vulkan debug callback
 

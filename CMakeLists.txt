@@ -11,6 +11,7 @@ add_executable(${PROJECT_NAME}
                 src/engine/VulkanManager.cpp
                 src/engine/VulkanLogger.cpp
                 src/engine/VulkanExtensions.cpp
+                src/engine/VulkanInstance.cpp
                 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${glfw3_INCLUDE_DIRS})
