@@ -1,11 +1,10 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-
 #include <vector>
 
 #include "Utilities.h"
+#include "VulkanIncludes.h"
+#include "VulkanLogger.h"
 
 class VulkanManager
 {
@@ -21,18 +20,10 @@ public:
     void initVulkan();
 
 private:
-    void initDebugMessenger();
     void createInstance();
     std::vector<const char*> getExtensions();
     std::vector<const char*> getValidationLayers();
 
     VkInstance m_instance;
-    const bool m_enableVulkanDebug
-#ifndef NDEBUG
-        = true;
-#else
-        = false;
-#endif
-    VkDebugUtilsMessengerEXT m_debugMessenger;
-
+    std::unique_ptr<VulkanLogger> m_logger;
 };

@@ -1,6 +1,8 @@
 #pragma once
 
-#include <stdint.h>
+#include <iostream>
+#include <memory>
+#include <string>
 
 const uint32_t WINDOW_WIDTH = 600;
 const uint32_t WINDOW_HEIGHT = 800;
@@ -28,3 +30,9 @@ do \
         throw std::runtime_error(msg.c_str()); \
     } \
 } while(0);
+
+#ifndef NDEBUG
+       const bool m_enableVulkanDebug = true;
+#else
+       const bool m_enableVulkanDebug = false;
+#endif
