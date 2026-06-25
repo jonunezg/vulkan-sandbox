@@ -40,4 +40,5 @@ VulkanInstance::VulkanInstance()
 VulkanInstance::~VulkanInstance()
 {
     vkDestroyInstance(m_instance, nullptr);
+    std::cout << "Vulkan instance destroyed" << std::endl;
 }

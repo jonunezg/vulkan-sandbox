@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
                 src/engine/VulkanLayers.cpp
                 src/engine/VulkanLogger.cpp
                 src/engine/VulkanManager.cpp
+                src/engine/VulkanLogicalDevice.cpp
                 src/engine/VulkanPhysicalDevice.cpp
                 )
 

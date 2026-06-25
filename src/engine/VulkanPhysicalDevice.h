@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "Utilities.h"
 #include "VulkanIncludes.h"
 #include "VulkanInstance.h"
@@ -17,6 +19,8 @@ class VulkanPhysicalDevice
 public:
     VulkanPhysicalDevice(std::shared_ptr<VulkanInstance> instance);
     ~VulkanPhysicalDevice();
+
+    const VkPhysicalDevice getPhysicalDevice() { return m_physicalDevice; }
 private:
     std::vector<PhysicalDevice> getPhysicalDevices();
 

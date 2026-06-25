@@ -123,5 +123,6 @@ VulkanLogger::~VulkanLogger()
     if (m_debugMessenger)
     {
         destroyDebugUtilsMessengerEXT(m_instance->getInstance(), m_debugMessenger);
+        std::cout << "Vulkan logger destroyed" << std::endl;
     }
 }

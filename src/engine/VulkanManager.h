@@ -6,6 +6,7 @@
 #include "VulkanIncludes.h"
 #include "VulkanInstance.h"
 #include "VulkanLogger.h"
+#include "VulkanLogicalDevice.h"
 #include "VulkanPhysicalDevice.h"
 
 class VulkanManager
@@ -20,7 +21,9 @@ public:
     VulkanManager(const VulkanManager&&) = delete;
 
 private:
+    // Vulkan objects following RAII pattern
     const std::shared_ptr<VulkanInstance> m_instance = std::make_shared<VulkanInstance>();
-    VulkanLogger m_logger = { m_instance };
-    VulkanPhysicalDevice m_physicalDevice = { m_instance };
+    const VulkanLogger m_logger = { m_instance };
+    const std::shared_ptr<VulkanPhysicalDevice> m_physicalDevice = std::make_shared<VulkanPhysicalDevice>(m_instance);
+    const VulkanLogicalDevice m_logicalDevice = { m_physicalDevice };
 };

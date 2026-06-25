@@ -95,6 +95,11 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
 VulkanPhysicalDevice::VulkanPhysicalDevice(std::shared_ptr<VulkanInstance> instance) :
 m_instance { std::move(instance) }
 {
+    if (!m_instance)
+    {
+        throw std::runtime_error("Physical device created without Vulkan instance");
+    }
+
     const auto devices = getPhysicalDevices();
 
     if (VK_ENABLE_DEBUG)
@@ -111,4 +116,6 @@ m_instance { std::move(instance) }
 }
 
 VulkanPhysicalDevice::~VulkanPhysicalDevice()
-{}
+{
+    std::cout << "Vulkan physical device destroyed" << std::endl;
+}
