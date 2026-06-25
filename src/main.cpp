@@ -115,16 +115,16 @@ private:
 int main()
 {
     {
-        auto app = HelloTriangleApplication {};
-    
+        
         try
         {
+            auto app = HelloTriangleApplication {};
             app.run();
             glfwTerminate();
         }
         catch (const std::exception& e)
         {
-            std::cerr << RED << e.what() << RESET << std::endl;
+            std::cerr << RED << "[Error]: " << e.what() << RESET << std::endl;
             return EXIT_FAILURE;
         }
     }

@@ -9,6 +9,7 @@ struct PhysicalDevice
     VkPhysicalDevice device = VK_NULL_HANDLE;
     VkPhysicalDeviceProperties properties = {};
     VkPhysicalDeviceFeatures features = {};
+    std::vector<VkQueueFamilyProperties> queueFamilies = {};
 };
 
 class VulkanPhysicalDevice
