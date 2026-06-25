@@ -165,7 +165,7 @@ m_instance { std::move(instance) }
 
 VulkanLogger::~VulkanLogger()
 {
-    if (VK_ENABLE_DEBUG)
+    if (m_debugMessenger)
     {
         destroyDebugUtilsMessengerEXT(m_instance->getInstance(), m_debugMessenger);
     }
