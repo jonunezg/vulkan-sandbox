@@ -9,8 +9,7 @@ VulkanManager::VulkanManager()
 {}
 
 VulkanManager::~VulkanManager()
-{
-}
+{}
 
 
 

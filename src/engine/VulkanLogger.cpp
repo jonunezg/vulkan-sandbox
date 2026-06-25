@@ -70,8 +70,6 @@ const VkDebugUtilsMessengerCreateInfoEXT debuggerInfo =
     .pUserData = nullptr,
 };
 
-// Local helpers
-
 const VkDebugUtilsMessengerCreateInfoEXT *VulkanLogger::getDebuggerMessengerInfo()
 {
     return VK_ENABLE_DEBUG ? &debuggerInfo : nullptr;
