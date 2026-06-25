@@ -1,4 +1,3 @@
-
 #include "VulkanLogger.h"
 
 // Vulkan debug callback

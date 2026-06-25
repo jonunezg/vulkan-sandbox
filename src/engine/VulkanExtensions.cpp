@@ -1,4 +1,3 @@
-
 #include "Utilities.h"
 #include "VulkanExtensions.h"
 #include "VulkanIncludes.h"

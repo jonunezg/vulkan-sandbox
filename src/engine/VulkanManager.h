@@ -6,6 +6,7 @@
 #include "VulkanIncludes.h"
 #include "VulkanInstance.h"
 #include "VulkanLogger.h"
+#include "VulkanPhysicalDevice.h"
 
 class VulkanManager
 {
@@ -21,4 +22,5 @@ public:
 private:
     const std::shared_ptr<VulkanInstance> m_instance = std::make_shared<VulkanInstance>();
     VulkanLogger m_logger = { m_instance };
+    VulkanPhysicalDevice m_physicalDevice = { m_instance };
 };

@@ -8,11 +8,12 @@ find_package(VulkanLoader REQUIRED)
 
 add_executable(${PROJECT_NAME}
                 src/main.cpp
-                src/engine/VulkanManager.cpp
-                src/engine/VulkanLogger.cpp
                 src/engine/VulkanExtensions.cpp
                 src/engine/VulkanInstance.cpp
                 src/engine/VulkanLayers.cpp
+                src/engine/VulkanLogger.cpp
+                src/engine/VulkanManager.cpp
+                src/engine/VulkanPhysicalDevice.cpp
                 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${glfw3_INCLUDE_DIRS})
