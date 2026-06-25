@@ -13,8 +13,6 @@ public:
 
     static const VkDebugUtilsMessengerCreateInfoEXT *getDebuggerMessengerInfo();
 
-    static std::vector<const char*> getValidationLayers();
-
     ~VulkanLogger();
 
 private:

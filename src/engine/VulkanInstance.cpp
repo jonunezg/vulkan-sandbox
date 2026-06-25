@@ -1,5 +1,7 @@
 #include "VulkanInstance.h"
 #include "VulkanLogger.h"
+#include "VulkanExtensions.h"
+#include "VulkanLayers.h"
 
 VulkanInstance::VulkanInstance()
 {
@@ -15,7 +17,7 @@ VulkanInstance::VulkanInstance()
     };
 
     const auto extensions = getExtensions();
-    const auto layers = VulkanLogger::getValidationLayers();
+    const auto layers = getValidationLayers();
     const auto debugger = VulkanLogger::getDebuggerMessengerInfo();
     
     const VkInstanceCreateInfo createInfo

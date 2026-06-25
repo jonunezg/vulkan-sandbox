@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VulkanExtensions.h"
+
 #include "VulkanIncludes.h"
 
 class VulkanInstance
