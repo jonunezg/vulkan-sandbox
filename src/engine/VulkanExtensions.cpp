@@ -38,7 +38,7 @@ void dumpRequiredExtensions(const std::vector<const char*>& extensions)
 
 void addDebugExtensions(std::vector<const char *>& extensions)
 {
-    if (m_enableVulkanDebug)
+    if (VK_ENABLE_DEBUG)
     {
         extensions.push_back(VK_REQUIRED_VALIDATION_EXTENSION);
         dumpAvailableExtensions();

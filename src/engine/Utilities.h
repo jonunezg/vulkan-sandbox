@@ -32,7 +32,7 @@ do \
 } while(0);
 
 #ifndef NDEBUG
-       const bool m_enableVulkanDebug = true;
+       #define VK_ENABLE_DEBUG (true)
 #else
-       const bool m_enableVulkanDebug = false;
+       #define VK_ENABLE_DEBUG (false)
 #endif

@@ -74,9 +74,8 @@ const VkDebugUtilsMessengerCreateInfoEXT debuggerInfo =
 
 const VkDebugUtilsMessengerCreateInfoEXT *VulkanLogger::getDebuggerMessengerInfo()
 {
-    return m_enableVulkanDebug ? &debuggerInfo : nullptr;
+    return VK_ENABLE_DEBUG ? &debuggerInfo : nullptr;
 }
-
 
 std::vector<VkLayerProperties> getAvailableValidationLayers()
 {
@@ -110,7 +109,7 @@ void dumpRequiredValidationLayers(const std::vector<const char*>& layers)
 
 std::vector<const char*> VulkanLogger::getValidationLayers()
 {
-    if (!m_enableVulkanDebug)
+    if (!VK_ENABLE_DEBUG)
     {
         return {};
     }
@@ -154,7 +153,7 @@ m_instance { std::move(instance) }
         throw std::runtime_error("Logger created without Vulkan instance");
     }
 
-    if (!m_enableVulkanDebug)
+    if (!VK_ENABLE_DEBUG)
     {
         return;
     }
@@ -166,7 +165,7 @@ m_instance { std::move(instance) }
 
 VulkanLogger::~VulkanLogger()
 {
-    if (m_enableVulkanDebug)
+    if (VK_ENABLE_DEBUG)
     {
         destroyDebugUtilsMessengerEXT(m_instance->getInstance(), m_debugMessenger);
     }
