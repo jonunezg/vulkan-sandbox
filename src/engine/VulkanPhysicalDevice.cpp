@@ -66,6 +66,11 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
 
     for (const auto& device : devices)
     {
+        if (i == devicesInfo.end())
+        {
+            throw std::runtime_error("Reached the end of the devices vector");
+        }
+
         i->device = device;
         // Ignore errors in obtaining information about devices
         vkGetPhysicalDeviceProperties(device, &i->properties);
@@ -99,7 +104,7 @@ m_instance { std::move(instance) }
 
     m_physicalDevice = selectDevice(devices).device;
 
-    if (m_physicalDevice != VK_NULL_HANDLE)
+    if (m_physicalDevice == VK_NULL_HANDLE)
     {
         throw std::runtime_error("Unable to select an appropriate physical device");
     }
