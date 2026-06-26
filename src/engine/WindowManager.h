@@ -44,6 +44,9 @@ public:
 
         return glfwWindowShouldClose(m_window);
     }
+
+    GLFWwindow* getWindowHandle() const { return m_window; }
+
 private:
     GlfwManager m_glfwManager;
     GLFWwindow* m_window = nullptr;

@@ -9,7 +9,7 @@ public:
     VulkanInstance();
     ~VulkanInstance();
 
-    const VkInstance getInstance() { return m_instance; }
+    const VkInstance getInstance() const { return m_instance; }
 private:
     VkInstance m_instance;
 };
