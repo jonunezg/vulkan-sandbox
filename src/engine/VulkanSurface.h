@@ -12,6 +12,8 @@ public:
     const std::shared_ptr<VulkanInstance> instance);
     ~VulkanSurface();
 
+    const VkSurfaceKHR getSurface() { return m_surface; }
+
 private:
     const std::shared_ptr<WindowManager> m_windowManager;
     const std::shared_ptr<VulkanInstance> m_instance;

@@ -19,7 +19,7 @@ void dumpPhysicalDevices(const std::vector<PhysicalDevice>& devices)
 
 bool isDeviceSuitable(const PhysicalDevice& device)
 {
-    return device.graphicQueueIndex && device.features.geometryShader;
+    return device.presentQueueIndex && device.graphicQueueIndex && device.features.geometryShader;
 }
 
 const PhysicalDevice& selectDevice(const std::vector<PhysicalDevice>& devices)
@@ -34,17 +34,27 @@ const PhysicalDevice& selectDevice(const std::vector<PhysicalDevice>& devices)
     throw std::runtime_error("No suitable device");
 }
 
-void processQueueFamilies(PhysicalDevice& device)
+void VulkanPhysicalDevice::processQueueFamilies(PhysicalDevice& device)
 {
     uint32_t i = 0;
 
     for (const auto& queueFamily : device.queueFamilies)
     {
-        if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+        if (!device.graphicQueueIndex && (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT))
         {
             device.graphicQueueIndex = i;
         }
-        break;
+
+        if(!device.presentQueueIndex)
+        {
+            VkBool32 presentSupport = false;
+            vkGetPhysicalDeviceSurfaceSupportKHR(device.device, i, m_surface->getSurface(), &presentSupport);
+            if (presentSupport)
+            {
+                device.presentQueueIndex = i;
+            }
+        }
+
         i++;
     }
 }
@@ -98,12 +108,15 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
     return devicesInfo;
 }
 
-VulkanPhysicalDevice::VulkanPhysicalDevice(std::shared_ptr<VulkanInstance> instance) :
-m_instance { std::move(instance) }
+VulkanPhysicalDevice::VulkanPhysicalDevice(
+    const std::shared_ptr<VulkanInstance> instance,
+    const std::shared_ptr<VulkanSurface> surface) :
+m_instance { std::move(instance) },
+m_surface { std::move(surface) }
 {
-    if (!m_instance)
+    if (!m_instance || !m_surface)
     {
-        throw std::runtime_error("Physical device created without Vulkan instance");
+        throw std::runtime_error("Physical device created without Vulkan instance or surface");
     }
 
     const auto devices = getPhysicalDevices();
