@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <vector>
 
 #include "Utilities.h"
@@ -12,6 +13,7 @@ struct PhysicalDevice
     VkPhysicalDeviceProperties properties = {};
     VkPhysicalDeviceFeatures features = {};
     std::vector<VkQueueFamilyProperties> queueFamilies = {};
+    std::optional<uint32_t> graphicQueueIndex;
 };
 
 class VulkanPhysicalDevice
@@ -20,10 +22,11 @@ public:
     VulkanPhysicalDevice(std::shared_ptr<VulkanInstance> instance);
     ~VulkanPhysicalDevice();
 
-    const VkPhysicalDevice getPhysicalDevice() { return m_physicalDevice; }
+    const PhysicalDevice& getSelectedDevice() { return m_selectedDevice; }
+
 private:
     std::vector<PhysicalDevice> getPhysicalDevices();
 
-    VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
+    PhysicalDevice m_selectedDevice;
     const std::shared_ptr<VulkanInstance> m_instance;
 };

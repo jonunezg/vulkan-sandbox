@@ -19,17 +19,7 @@ void dumpPhysicalDevices(const std::vector<PhysicalDevice>& devices)
 
 bool isDeviceSuitable(const PhysicalDevice& device)
 {
-    bool hasGraphicsFamily = false;
-
-    for (const auto& queueFamily : device.queueFamilies)
-    {
-        if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-        {
-            hasGraphicsFamily = true;
-        }
-    }
-
-    return hasGraphicsFamily && device.features.geometryShader;
+    return device.graphicQueueIndex && device.features.geometryShader;
 }
 
 const PhysicalDevice& selectDevice(const std::vector<PhysicalDevice>& devices)
@@ -42,6 +32,21 @@ const PhysicalDevice& selectDevice(const std::vector<PhysicalDevice>& devices)
         }
     }
     throw std::runtime_error("No suitable device");
+}
+
+void processQueueFamilies(PhysicalDevice& device)
+{
+    uint32_t i = 0;
+
+    for (const auto& queueFamily : device.queueFamilies)
+    {
+        if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+        {
+            device.graphicQueueIndex = i;
+        }
+        break;
+        i++;
+    }
 }
 
 // Class methods
@@ -84,6 +89,7 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
         {
             i->queueFamilies = std::vector<VkQueueFamilyProperties>{ queueFaimilyCount };
             vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFaimilyCount, i->queueFamilies.data());
+            processQueueFamilies(*i);
         }
 
         i++;
@@ -107,12 +113,7 @@ m_instance { std::move(instance) }
         dumpPhysicalDevices(devices);
     }
 
-    m_physicalDevice = selectDevice(devices).device;
-
-    if (m_physicalDevice == VK_NULL_HANDLE)
-    {
-        throw std::runtime_error("Unable to select an appropriate physical device");
-    }
+    m_selectedDevice = selectDevice(devices);
 }
 
 VulkanPhysicalDevice::~VulkanPhysicalDevice()
