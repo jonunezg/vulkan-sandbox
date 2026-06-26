@@ -38,6 +38,10 @@ m_physicalDevice { std::move(physicalDevice) }
     };
 
     VK_TERMINATE_IF_FAILED(vkCreateDevice(m_physicalDevice->getSelectedDevice().device, &createInfo, nullptr, &m_device));
+
+    VkQueue graphicsQueue;
+
+    vkGetDeviceQueue(m_device, m_physicalDevice->getSelectedDevice().graphicQueueIndex.value(), 0, &graphicsQueue);
 }
 
 VulkanLogicalDevice::~VulkanLogicalDevice()
