@@ -13,4 +13,7 @@ public:
 private:
     const std::shared_ptr<VulkanPhysicalDevice> m_physicalDevice;
     VkDevice m_device = VK_NULL_HANDLE;
+
+    VkQueue m_graphicsQueue;
+    VkQueue m_presentQueue;
 };

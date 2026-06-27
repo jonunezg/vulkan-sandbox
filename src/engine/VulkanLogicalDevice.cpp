@@ -1,3 +1,4 @@
+#include <set>
 #include "VulkanLayers.h"
 #include "VulkanLogicalDevice.h"
 
@@ -11,14 +12,26 @@ m_physicalDevice { std::move(physicalDevice) }
 
     const float priority = 1.0f;
 
-    const VkDeviceQueueCreateInfo queueCreateInfo
+    std::set<uint32_t> indices =
     {
-        .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-        .pNext = nullptr,
-        .flags = 0,
-        .queueFamilyIndex = m_physicalDevice->getSelectedDevice().graphicQueueIndex.value(),
-        .queueCount = 1,
-        .pQueuePriorities = &priority,
+        m_physicalDevice->getSelectedDevice().graphicQueueIndex.value(),
+        m_physicalDevice->getSelectedDevice().presentQueueIndex.value()
+    };
+
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfo;
+
+    for (const auto& index : indices)
+    {
+        VkDeviceQueueCreateInfo createInfo =
+        {
+            .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .queueFamilyIndex = index,
+            .queueCount = 1,
+            .pQueuePriorities = &priority,
+        };
+        queueCreateInfo.push_back(createInfo);
     };
 
     const VkPhysicalDeviceFeatures deviceFeatures {};
@@ -28,8 +41,8 @@ m_physicalDevice { std::move(physicalDevice) }
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
         .pNext = nullptr,
         .flags = 0,
-        .queueCreateInfoCount = 1,
-        .pQueueCreateInfos = &queueCreateInfo,
+        .queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfo.size()),
+        .pQueueCreateInfos = queueCreateInfo.data(),
         .enabledLayerCount = 0,
         .ppEnabledLayerNames = nullptr,
         .enabledExtensionCount = 0,
@@ -39,9 +52,11 @@ m_physicalDevice { std::move(physicalDevice) }
 
     VK_TERMINATE_IF_FAILED(vkCreateDevice(m_physicalDevice->getSelectedDevice().device, &createInfo, nullptr, &m_device));
 
-    VkQueue graphicsQueue;
+    vkGetDeviceQueue(m_device, m_physicalDevice->getSelectedDevice().graphicQueueIndex.value(), 0, &m_graphicsQueue);
+    vkGetDeviceQueue(m_device, m_physicalDevice->getSelectedDevice().presentQueueIndex.value(), 0, &m_presentQueue);
 
-    vkGetDeviceQueue(m_device, m_physicalDevice->getSelectedDevice().graphicQueueIndex.value(), 0, &graphicsQueue);
+    std::cout << "Graphics queue: " << m_graphicsQueue << std::endl;
+    std::cout << "Present queue: " << m_presentQueue << std::endl;
 }
 
 VulkanLogicalDevice::~VulkanLogicalDevice()
