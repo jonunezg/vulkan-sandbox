@@ -14,8 +14,15 @@ struct PhysicalDevice
     VkPhysicalDeviceProperties properties = {};
     VkPhysicalDeviceFeatures features = {};
     std::vector<VkQueueFamilyProperties> queueFamilies = {};
+
+    // Queue family indices
     std::optional<uint32_t> graphicQueueIndex;
     std::optional<uint32_t> presentQueueIndex;
+
+    // Swap chain support
+    VkSurfaceCapabilitiesKHR capabilities;
+    std::vector<VkSurfaceFormatKHR> formats;
+    std::vector<VkPresentModeKHR> presentModes;
 };
 
 class VulkanPhysicalDevice

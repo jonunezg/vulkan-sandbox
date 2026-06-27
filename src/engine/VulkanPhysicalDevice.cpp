@@ -37,12 +37,22 @@ bool deviceSupportsRequiredExtensions(const PhysicalDevice& device)
     return requiredExtensions.empty();
 }
 
+bool deviceSupportsSwapChain(const PhysicalDevice& device)
+{
+    bool support = false;
+    if (deviceSupportsRequiredExtensions(device))
+    {
+        support = !device.formats.empty() && !device.presentModes.empty();
+    }
+    return support;
+}
+
 bool isDeviceSuitable(const PhysicalDevice& device)
 {
     return device.presentQueueIndex
         && device.graphicQueueIndex
         && device.features.geometryShader
-        && deviceSupportsRequiredExtensions(device);
+        && deviceSupportsSwapChain(device);
 }
 
 const PhysicalDevice& selectDevice(const std::vector<PhysicalDevice>& devices)
@@ -123,6 +133,30 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
             i->queueFamilies = std::vector<VkQueueFamilyProperties>{ queueFaimilyCount };
             vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFaimilyCount, i->queueFamilies.data());
             processQueueFamilies(*i);
+        }
+
+        if (deviceSupportsRequiredExtensions(*i))
+        {
+            vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface->getSurface(), &i->capabilities);
+    
+            uint32_t formatCount;
+            vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface->getSurface(), &formatCount, nullptr);
+            
+            if (formatCount)
+            {
+                i->formats.resize(formatCount);
+                vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface->getSurface(), &formatCount, i->formats.data());
+    
+            }
+    
+            uint32_t presentModeCount;
+            vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface->getSurface(), &presentModeCount, nullptr);
+    
+            if (presentModeCount)
+            {
+                i->presentModes.resize(presentModeCount);
+                vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface->getSurface(), &presentModeCount, i->presentModes.data());
+            }
         }
 
         i++;
