@@ -1,4 +1,6 @@
 #include <set>
+
+#include "VulkanExtensions.h"
 #include "VulkanLayers.h"
 #include "VulkanLogicalDevice.h"
 
@@ -35,6 +37,7 @@ m_physicalDevice { std::move(physicalDevice) }
     };
 
     const VkPhysicalDeviceFeatures deviceFeatures {};
+    const auto requiredExtensions = getRequiredPhysicalDeviceExtensions();
 
     const VkDeviceCreateInfo createInfo
     {
@@ -45,8 +48,8 @@ m_physicalDevice { std::move(physicalDevice) }
         .pQueueCreateInfos = queueCreateInfo.data(),
         .enabledLayerCount = 0,
         .ppEnabledLayerNames = nullptr,
-        .enabledExtensionCount = 0,
-        .ppEnabledExtensionNames = nullptr,
+        .enabledExtensionCount = static_cast<uint32_t>(requiredExtensions.size()),
+        .ppEnabledExtensionNames = requiredExtensions.data(),
         .pEnabledFeatures = &deviceFeatures,
     };
 

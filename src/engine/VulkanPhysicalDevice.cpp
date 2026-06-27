@@ -1,5 +1,6 @@
 #include <vector>
 
+#include "VulkanExtensions.h"
 #include "VulkanPhysicalDevice.h"
 
 
@@ -17,9 +18,31 @@ void dumpPhysicalDevices(const std::vector<PhysicalDevice>& devices)
     }
 }
 
+bool deviceSupportsRequiredExtensions(const PhysicalDevice& device)
+{
+    uint32_t extensionCount;
+    vkEnumerateDeviceExtensionProperties(device.device, nullptr, &extensionCount, nullptr);
+
+    std::vector<VkExtensionProperties> availableExtensions { extensionCount };
+    vkEnumerateDeviceExtensionProperties(device.device, nullptr, &extensionCount, availableExtensions.data());
+
+    const auto requiredExtensionsVector = getRequiredPhysicalDeviceExtensions();
+    auto requiredExtensions = std::set<std::string>{ requiredExtensionsVector.begin(), requiredExtensionsVector.end() };
+
+    for (const auto& extension : availableExtensions)
+    {
+        requiredExtensions.erase(extension.extensionName);
+    }
+
+    return requiredExtensions.empty();
+}
+
 bool isDeviceSuitable(const PhysicalDevice& device)
 {
-    return device.presentQueueIndex && device.graphicQueueIndex && device.features.geometryShader;
+    return device.presentQueueIndex
+        && device.graphicQueueIndex
+        && device.features.geometryShader
+        && deviceSupportsRequiredExtensions(device);
 }
 
 const PhysicalDevice& selectDevice(const std::vector<PhysicalDevice>& devices)

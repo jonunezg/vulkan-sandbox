@@ -61,3 +61,8 @@ std::vector<const char *> getExtensions()
 
     return extensions;
 }
+
+const std::vector<const char *> getRequiredPhysicalDeviceExtensions()
+{
+    return std::vector<const char *>{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+}
