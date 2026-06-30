@@ -1,3 +1,5 @@
+#include "algorithm"
+
 #include "VulkanSwapChain.h"
 
 VkSurfaceFormatKHR selectSwapChainFormat(const std::vector<VkSurfaceFormatKHR>& formats)
@@ -37,36 +39,86 @@ VkExtent2D VulkanSwapChain::selectSwapExtent(const VkSurfaceCapabilitiesKHR& cap
     {
         // Get the extent size using GLFW
         const auto bufferSize = m_windowManager->getFrameBufferSize();
+
+        return
+        {
+            std::clamp(bufferSize.first, capabilities.minImageExtent.width, capabilities.maxImageExtent.width),
+            std::clamp(bufferSize.second, capabilities.minImageExtent.height, capabilities.minImageExtent.height)
+        };
     }
 }
 
 VulkanSwapChain::VulkanSwapChain(
     const std::shared_ptr<VulkanPhysicalDevice> physicalDevice,
+    const std::shared_ptr<VulkanLogicalDevice> logicalDevice,
     const std::shared_ptr<VulkanSurface> surface,
     const std::shared_ptr<WindowManager> windowManager) :
 m_physicalDevice { std::move(physicalDevice) },
+m_logicalDevice { std::move(logicalDevice) },
 m_surface { std::move(surface) },
 m_windowManager { std::move(windowManager) }
 {
     if (!m_physicalDevice)
     {
-        throw std::runtime_error("Swap chain created without physical device");
+        throw std::runtime_error("Swapchain created without physical device");
+    }
+
+    if (!m_logicalDevice)
+    {
+        throw std::runtime_error("Swapchain created without logical device");
     }
 
     if (!m_surface)
     {
-        throw std::runtime_error("Swap chain created without surface");
+        throw std::runtime_error("Swapchain created without surface");
     }
 
     if (!m_windowManager)
     {
-        throw std::runtime_error("Swap chain created without window manager");
+        throw std::runtime_error("Swapchain created without window manager");
     }
 
-    auto format = selectSwapChainFormat(m_physicalDevice->getSelectedDevice().formats);
-    auto mode = selectPresentMode(m_physicalDevice->getSelectedDevice().presentModes);
+    const auto device = m_physicalDevice->getSelectedDevice();
+
+    const auto format = selectSwapChainFormat(device.formats);
+    const auto mode = selectPresentMode(device.presentModes);
+    const auto extent = selectSwapExtent(device.capabilities);
+    const uint32_t imageCount = device.capabilities.maxImageCount > 0
+        ? std::clamp(device.capabilities.minImageCount + 1, device.capabilities.minImageCount, device.capabilities.maxImageCount)
+        : device.capabilities.minImageCount + 1;
+    const bool multiFamily = device.graphicQueueIndex != device.presentQueueIndex;
+    const uint32_t familyIndices[] = { device.graphicQueueIndex.value(), device.presentQueueIndex.value() };
+
+    const VkSwapchainCreateInfoKHR createInfo
+    {
+        .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+        .pNext = nullptr,
+        .flags = 0,
+        .surface = m_surface->getSurface(),
+        .minImageCount = imageCount,
+        .imageFormat = format.format,
+        .imageColorSpace = format.colorSpace,
+        .imageExtent = extent,
+        .imageArrayLayers = 1, // Single layer, multiple layers are used for stereoscopic applications
+        .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, // Direct drawing, other values are used for post processing
+        .imageSharingMode = multiFamily ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
+        .queueFamilyIndexCount = multiFamily ? 2u : 0u,
+        .pQueueFamilyIndices = multiFamily ? familyIndices : nullptr,
+        .preTransform = device.capabilities.currentTransform,
+        .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+        .presentMode = mode,
+        .clipped = VK_TRUE, // Don't care about pixels obscured by other windows
+        .oldSwapchain = VK_NULL_HANDLE,
+    };
+
+    VK_TERMINATE_IF_FAILED(vkCreateSwapchainKHR(m_logicalDevice->getDevice(), &createInfo, nullptr, &m_swapChain))
+
+    std::cout << "Vulkan swapchain created" << std::endl;
 }
 
 VulkanSwapChain::~VulkanSwapChain()
 {
+    vkDestroySwapchainKHR(m_logicalDevice->getDevice(), m_swapChain, nullptr);
+
+    std::cout << "Vulkan swapchain destroyed" << std::endl;
 }

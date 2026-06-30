@@ -10,6 +10,8 @@ public:
     VulkanLogicalDevice(const std::shared_ptr<VulkanPhysicalDevice> physicalDevice);
     ~VulkanLogicalDevice();
 
+    const VkDevice getDevice() { return m_device; }
+
 private:
     const std::shared_ptr<VulkanPhysicalDevice> m_physicalDevice;
     VkDevice m_device = VK_NULL_HANDLE;

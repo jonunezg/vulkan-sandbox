@@ -32,6 +32,6 @@ private:
     const VulkanLogger m_logger = { m_instance };
     const std::shared_ptr<VulkanSurface> m_surface = std::make_shared<VulkanSurface>(m_windowManager, m_instance);
     const std::shared_ptr<VulkanPhysicalDevice> m_physicalDevice = std::make_shared<VulkanPhysicalDevice>(m_instance, m_surface);
-    const VulkanLogicalDevice m_logicalDevice = { m_physicalDevice };
-    const VulkanSwapChain m_swapChain = { m_physicalDevice, m_surface, m_windowManager };
+    const std::shared_ptr<VulkanLogicalDevice> m_logicalDevice = std::make_shared<VulkanLogicalDevice>(m_physicalDevice);
+    const VulkanSwapChain m_swapChain = { m_physicalDevice, m_logicalDevice, m_surface, m_windowManager };
 };
