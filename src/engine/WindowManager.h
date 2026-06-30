@@ -47,6 +47,14 @@ public:
 
     GLFWwindow* getWindowHandle() const { return m_window; }
 
+    const std::pair<uint32_t, uint32_t> getFrameBufferSize()
+    {
+        int width, height;
+        glfwGetFramebufferSize(m_window, &width, &height);
+
+        return { width, height };
+    }
+
 private:
     GlfwManager m_glfwManager;
     GLFWwindow* m_window = nullptr;
