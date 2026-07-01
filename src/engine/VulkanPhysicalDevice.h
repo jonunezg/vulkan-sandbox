@@ -19,7 +19,7 @@ struct PhysicalDevice
     std::optional<uint32_t> graphicQueueIndex;
     std::optional<uint32_t> presentQueueIndex;
 
-    // Swap chain support
+    // Swapchain support
     VkSurfaceCapabilitiesKHR capabilities;
     std::vector<VkSurfaceFormatKHR> formats;
     std::vector<VkPresentModeKHR> presentModes;
