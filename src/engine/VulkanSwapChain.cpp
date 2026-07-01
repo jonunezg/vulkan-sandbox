@@ -56,7 +56,9 @@ VulkanSwapChain::VulkanSwapChain(
 m_physicalDevice { std::move(physicalDevice) },
 m_logicalDevice { std::move(logicalDevice) },
 m_surface { std::move(surface) },
-m_windowManager { std::move(windowManager) }
+m_windowManager { std::move(windowManager) },
+m_format { selectSwapChainFormat(m_physicalDevice->getSelectedDevice().formats) },
+m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) }
 {
     if (!m_physicalDevice)
     {
@@ -80,9 +82,7 @@ m_windowManager { std::move(windowManager) }
 
     const auto device = m_physicalDevice->getSelectedDevice();
 
-    const auto format = selectSwapChainFormat(device.formats);
     const auto mode = selectPresentMode(device.presentModes);
-    const auto extent = selectSwapExtent(device.capabilities);
     const uint32_t imageCount = device.capabilities.maxImageCount > 0
         ? std::clamp(device.capabilities.minImageCount + 1, device.capabilities.minImageCount, device.capabilities.maxImageCount)
         : device.capabilities.minImageCount + 1;
@@ -96,9 +96,9 @@ m_windowManager { std::move(windowManager) }
         .flags = 0,
         .surface = m_surface->getSurface(),
         .minImageCount = imageCount,
-        .imageFormat = format.format,
-        .imageColorSpace = format.colorSpace,
-        .imageExtent = extent,
+        .imageFormat = m_format.format,
+        .imageColorSpace = m_format.colorSpace,
+        .imageExtent = m_extent,
         .imageArrayLayers = 1, // Single layer, multiple layers are used for stereoscopic applications
         .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, // Direct drawing, other values are used for post processing
         .imageSharingMode = multiFamily ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
@@ -112,6 +112,9 @@ m_windowManager { std::move(windowManager) }
     };
 
     VK_TERMINATE_IF_FAILED(vkCreateSwapchainKHR(m_logicalDevice->getDevice(), &createInfo, nullptr, &m_swapChain))
+
+    uint32_t swapchainImageCount;
+    VK_TERMINATE_IF_FAILED(vkGetSwapchainImagesKHR(m_logicalDevice->getDevice(), m_swapChain, &swapchainImageCount, nullptr));
 
     std::cout << "Vulkan swapchain created" << std::endl;
 }

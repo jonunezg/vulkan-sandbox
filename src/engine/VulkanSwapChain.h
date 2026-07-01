@@ -23,5 +23,9 @@ private:
     const std::shared_ptr<VulkanLogicalDevice> m_logicalDevice;
     const std::shared_ptr<VulkanSurface> m_surface;
     const std::shared_ptr<WindowManager> m_windowManager;
+    const VkSurfaceFormatKHR m_format;
+    const VkExtent2D m_extent;
+
     VkSwapchainKHR m_swapChain;
+    std::vector<VkImage> m_images;
 };
