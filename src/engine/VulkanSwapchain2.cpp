@@ -1,8 +1,8 @@
 #include "algorithm"
 
-#include "VulkanSwapChain.h"
+#include "VulkanSwapchain.h"
 
-VkSurfaceFormatKHR selectSwapChainFormat(const std::vector<VkSurfaceFormatKHR>& formats)
+VkSurfaceFormatKHR selectSwapchainFormat(const std::vector<VkSurfaceFormatKHR>& formats)
 {
     for (const auto& format : formats)
     {
@@ -28,7 +28,7 @@ VkPresentModeKHR selectPresentMode(const std::vector<VkPresentModeKHR>& modes)
     return VK_PRESENT_MODE_FIFO_KHR; // This mode is the only one guaranteed to exist
 }
 
-VkExtent2D VulkanSwapChain::selectSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
+VkExtent2D VulkanSwapchain::selectSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
 {
     if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
     {
@@ -48,7 +48,7 @@ VkExtent2D VulkanSwapChain::selectSwapExtent(const VkSurfaceCapabilitiesKHR& cap
     }
 }
 
-VulkanSwapChain::VulkanSwapChain(
+VulkanSwapchain::VulkanSwapchain(
     const std::shared_ptr<VulkanPhysicalDevice> physicalDevice,
     const std::shared_ptr<VulkanLogicalDevice> logicalDevice,
     const std::shared_ptr<VulkanSurface> surface,
@@ -57,7 +57,7 @@ m_physicalDevice { std::move(physicalDevice) },
 m_logicalDevice { std::move(logicalDevice) },
 m_surface { std::move(surface) },
 m_windowManager { std::move(windowManager) },
-m_format { selectSwapChainFormat(m_physicalDevice->getSelectedDevice().formats) },
+m_format { selectSwapchainFormat(m_physicalDevice->getSelectedDevice().formats) },
 m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) }
 {
     if (!m_physicalDevice)
@@ -111,17 +111,25 @@ m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) 
         .oldSwapchain = VK_NULL_HANDLE,
     };
 
-    VK_TERMINATE_IF_FAILED(vkCreateSwapchainKHR(m_logicalDevice->getDevice(), &createInfo, nullptr, &m_swapChain))
+    VK_TERMINATE_IF_FAILED(vkCreateSwapchainKHR(m_logicalDevice->getDevice(), &createInfo, nullptr, &m_swapchain))
 
     uint32_t swapchainImageCount;
-    VK_TERMINATE_IF_FAILED(vkGetSwapchainImagesKHR(m_logicalDevice->getDevice(), m_swapChain, &swapchainImageCount, nullptr));
+    VK_TERMINATE_IF_FAILED(vkGetSwapchainImagesKHR(m_logicalDevice->getDevice(), m_swapchain, &swapchainImageCount, nullptr));
+    
+    if (!swapchainImageCount)
+    {
+        throw std::runtime_error("Swapchain lacks images");
+    }
+    
+    m_images.resize(swapchainImageCount);
+    VK_TERMINATE_IF_FAILED(vkGetSwapchainImagesKHR(m_logicalDevice->getDevice(), m_swapchain, &swapchainImageCount, m_images.data()));
 
     std::cout << "Vulkan swapchain created" << std::endl;
 }
 
-VulkanSwapChain::~VulkanSwapChain()
+VulkanSwapchain::~VulkanSwapchain()
 {
-    vkDestroySwapchainKHR(m_logicalDevice->getDevice(), m_swapChain, nullptr);
+    vkDestroySwapchainKHR(m_logicalDevice->getDevice(), m_swapchain, nullptr);
 
     std::cout << "Vulkan swapchain destroyed" << std::endl;
 }

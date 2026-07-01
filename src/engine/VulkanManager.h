@@ -9,7 +9,7 @@
 #include "VulkanLogicalDevice.h"
 #include "VulkanPhysicalDevice.h"
 #include "VulkanSurface.h"
-#include "VulkanSwapChain.h"
+#include "VulkanSwapchain.h"
 #include "WindowManager.h"
 
 class VulkanManager
@@ -33,5 +33,5 @@ private:
     const std::shared_ptr<VulkanSurface> m_surface = std::make_shared<VulkanSurface>(m_windowManager, m_instance);
     const std::shared_ptr<VulkanPhysicalDevice> m_physicalDevice = std::make_shared<VulkanPhysicalDevice>(m_instance, m_surface);
     const std::shared_ptr<VulkanLogicalDevice> m_logicalDevice = std::make_shared<VulkanLogicalDevice>(m_physicalDevice);
-    const VulkanSwapChain m_swapChain = { m_physicalDevice, m_logicalDevice, m_surface, m_windowManager };
+    const VulkanSwapchain m_swapchain = { m_physicalDevice, m_logicalDevice, m_surface, m_windowManager };
 };

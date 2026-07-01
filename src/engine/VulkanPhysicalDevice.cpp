@@ -37,7 +37,7 @@ bool deviceSupportsRequiredExtensions(const PhysicalDevice& device)
     return requiredExtensions.empty();
 }
 
-bool deviceSupportsSwapChain(const PhysicalDevice& device)
+bool deviceSupportsSwapchain(const PhysicalDevice& device)
 {
     bool support = false;
     if (deviceSupportsRequiredExtensions(device))
@@ -52,7 +52,7 @@ bool isDeviceSuitable(const PhysicalDevice& device)
     return device.presentQueueIndex
         && device.graphicQueueIndex
         && device.features.geometryShader
-        && deviceSupportsSwapChain(device);
+        && deviceSupportsSwapchain(device);
 }
 
 const PhysicalDevice& selectDevice(const std::vector<PhysicalDevice>& devices)

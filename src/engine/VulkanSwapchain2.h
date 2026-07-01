@@ -6,15 +6,15 @@
 #include "VulkanPhysicalDevice.h"
 #include "VulkanSurface.h"
 
-class VulkanSwapChain
+class VulkanSwapchain
 {
 public:
-    VulkanSwapChain(
+    VulkanSwapchain(
         const std::shared_ptr<VulkanPhysicalDevice> physicalDevice,
         const std::shared_ptr<VulkanLogicalDevice> logicalDevice,
         const std::shared_ptr<VulkanSurface> surface,
         const std::shared_ptr<WindowManager> windowManager);
-    ~VulkanSwapChain();
+    ~VulkanSwapchain();
 private:
 
     VkExtent2D selectSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
@@ -26,6 +26,6 @@ private:
     const VkSurfaceFormatKHR m_format;
     const VkExtent2D m_extent;
 
-    VkSwapchainKHR m_swapChain;
+    VkSwapchainKHR m_swapchain;
     std::vector<VkImage> m_images;
 };
