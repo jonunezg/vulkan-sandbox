@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Utilities.h"
+#include "VulkanImageView.h"
 #include "VulkanIncludes.h"
 #include "VulkanLogicalDevice.h"
 #include "VulkanPhysicalDevice.h"
@@ -29,5 +30,5 @@ private:
 
     VkSwapchainKHR m_swapchain;
     std::vector<VkImage> m_images;
-    std::vector<VkImageView> m_imageViews;
+    std::vector<std::unique_ptr<VulkanImageView>> m_imageViews;
 };

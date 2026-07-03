@@ -9,6 +9,7 @@ find_package(VulkanLoader REQUIRED)
 add_executable(${PROJECT_NAME}
                 src/main.cpp
                 src/engine/VulkanExtensions.cpp
+                src/engine/VulkanImageView.cpp
                 src/engine/VulkanInstance.cpp
                 src/engine/VulkanLayers.cpp
                 src/engine/VulkanLogger.cpp
