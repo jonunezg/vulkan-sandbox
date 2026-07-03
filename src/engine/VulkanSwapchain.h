@@ -18,6 +18,7 @@ public:
 private:
 
     VkExtent2D selectSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+    void createImageViews();
 
     const std::shared_ptr<VulkanPhysicalDevice> m_physicalDevice;
     const std::shared_ptr<VulkanLogicalDevice> m_logicalDevice;
@@ -28,4 +29,5 @@ private:
 
     VkSwapchainKHR m_swapchain;
     std::vector<VkImage> m_images;
+    std::vector<VkImageView> m_imageViews;
 };

@@ -48,6 +48,41 @@ VkExtent2D VulkanSwapchain::selectSwapExtent(const VkSurfaceCapabilitiesKHR& cap
     }
 }
 
+void VulkanSwapchain::createImageViews()
+{
+    m_imageViews.resize(m_images.size());
+
+    for (size_t i = 0; i < m_images.size(); i++)
+    {
+        const VkImageViewCreateInfo createInfo
+        {
+            .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .image = m_images[i],
+            .viewType = VK_IMAGE_VIEW_TYPE_2D,
+            .format = m_format.format,
+            .components =
+            {
+                VK_COMPONENT_SWIZZLE_IDENTITY,  // r
+                VK_COMPONENT_SWIZZLE_IDENTITY,  // g
+                VK_COMPONENT_SWIZZLE_IDENTITY,  // b
+                VK_COMPONENT_SWIZZLE_IDENTITY   // a
+            },
+            .subresourceRange =
+            {
+                VK_IMAGE_ASPECT_COLOR_BIT,  // aspect mask
+                0,                          // base mip level
+                1,                          // level count
+                0,                          // base array layer
+                1                           // layer count
+            }
+        };
+
+        VK_TERMINATE_IF_FAILED(vkCreateImageView(m_logicalDevice->getDevice(), &createInfo, nullptr, &m_imageViews[i]));
+    }
+}
+
 VulkanSwapchain::VulkanSwapchain(
     const std::shared_ptr<VulkanPhysicalDevice> physicalDevice,
     const std::shared_ptr<VulkanLogicalDevice> logicalDevice,
@@ -124,11 +159,18 @@ m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) 
     m_images.resize(swapchainImageCount);
     VK_TERMINATE_IF_FAILED(vkGetSwapchainImagesKHR(m_logicalDevice->getDevice(), m_swapchain, &swapchainImageCount, m_images.data()));
 
+    createImageViews();
+
     std::cout << "Vulkan swapchain created" << std::endl;
 }
 
 VulkanSwapchain::~VulkanSwapchain()
 {
+    for (const auto& imageView : m_imageViews)
+    {
+        vkDestroyImageView(m_logicalDevice->getDevice(), imageView, nullptr);
+    }
+
     vkDestroySwapchainKHR(m_logicalDevice->getDevice(), m_swapchain, nullptr);
 
     std::cout << "Vulkan swapchain destroyed" << std::endl;
