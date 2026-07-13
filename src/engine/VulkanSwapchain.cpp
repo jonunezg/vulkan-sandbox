@@ -119,10 +119,10 @@ m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) 
         .oldSwapchain = VK_NULL_HANDLE,
     };
 
-    VK_TERMINATE_IF_FAILED(vkCreateSwapchainKHR(m_logicalDevice->getDevice(), &createInfo, nullptr, &m_swapchain))
+    VK_THROW_IF_FAILED(vkCreateSwapchainKHR(m_logicalDevice->getDevice(), &createInfo, nullptr, &m_swapchain))
 
     uint32_t swapchainImageCount;
-    VK_TERMINATE_IF_FAILED(vkGetSwapchainImagesKHR(m_logicalDevice->getDevice(), m_swapchain, &swapchainImageCount, nullptr));
+    VK_THROW_IF_FAILED(vkGetSwapchainImagesKHR(m_logicalDevice->getDevice(), m_swapchain, &swapchainImageCount, nullptr));
     
     if (!swapchainImageCount)
     {
@@ -130,7 +130,7 @@ m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) 
     }
     
     m_images.resize(swapchainImageCount);
-    VK_TERMINATE_IF_FAILED(vkGetSwapchainImagesKHR(m_logicalDevice->getDevice(), m_swapchain, &swapchainImageCount, m_images.data()));
+    VK_THROW_IF_FAILED(vkGetSwapchainImagesKHR(m_logicalDevice->getDevice(), m_swapchain, &swapchainImageCount, m_images.data()));
 
     createImageViews();
 
