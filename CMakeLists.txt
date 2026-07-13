@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME}
     src/engine/VulkanManager.cpp
     src/engine/VulkanLogicalDevice.cpp
     src/engine/VulkanPhysicalDevice.cpp
+    src/engine/VulkanShaderModule.cpp
     src/engine/VulkanSurface.cpp
     src/engine/VulkanSwapchain.cpp
 )
