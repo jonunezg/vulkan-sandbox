@@ -5,11 +5,11 @@
 std::vector<VkExtensionProperties> getAvailableExtensions()
 {
     uint32_t count = 0;
-    VK_TERMINATE_IF_FAILED(vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr));
+    VK_THROW_IF_FAILED(vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr));
 
     std::vector<VkExtensionProperties> extensions(count);
 
-    VK_TERMINATE_IF_FAILED(vkEnumerateInstanceExtensionProperties(nullptr, &count, extensions.data()));
+    VK_THROW_IF_FAILED(vkEnumerateInstanceExtensionProperties(nullptr, &count, extensions.data()));
 
     return extensions;
 }

@@ -33,7 +33,7 @@ m_logicalDevice { std::move(logicalDevice) }
         }
     };
 
-    VK_TERMINATE_IF_FAILED(vkCreateImageView(m_logicalDevice->getDevice(), &createInfo, nullptr, &m_imageView));
+    VK_THROW_IF_FAILED(vkCreateImageView(m_logicalDevice->getDevice(), &createInfo, nullptr, &m_imageView));
 }
 
 VulkanImageView::~VulkanImageView()

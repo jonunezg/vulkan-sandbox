@@ -32,7 +32,7 @@ VulkanInstance::VulkanInstance()
         .ppEnabledExtensionNames = extensions.data(),
     };
 
-    VK_TERMINATE_IF_FAILED(vkCreateInstance(&createInfo, nullptr, &m_instance));
+    VK_THROW_IF_FAILED(vkCreateInstance(&createInfo, nullptr, &m_instance));
 
     std::cout << "Vulkan instance created" << std::endl;
 }

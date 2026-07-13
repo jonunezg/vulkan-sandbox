@@ -7,10 +7,10 @@
 std::vector<VkLayerProperties> getAvailableValidationLayers()
 {
     uint32_t count = 0;
-    VK_TERMINATE_IF_FAILED(vkEnumerateInstanceLayerProperties(&count, nullptr));
+    VK_THROW_IF_FAILED(vkEnumerateInstanceLayerProperties(&count, nullptr));
 
     std::vector<VkLayerProperties> properties(count);
-    VK_TERMINATE_IF_FAILED(vkEnumerateInstanceLayerProperties(&count, properties.data()));
+    VK_THROW_IF_FAILED(vkEnumerateInstanceLayerProperties(&count, properties.data()));
 
     return properties;
 }

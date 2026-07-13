@@ -115,7 +115,7 @@ m_instance { std::move(instance) }
 
     const auto createInfo = getDebuggerMessengerInfo();
 
-    VK_TERMINATE_IF_FAILED(createDebugUtilsMessengerEXT(m_instance->getInstance(), createInfo, &m_debugMessenger));
+    VK_THROW_IF_FAILED(createDebugUtilsMessengerEXT(m_instance->getInstance(), createInfo, &m_debugMessenger));
 }
 
 VulkanLogger::~VulkanLogger()

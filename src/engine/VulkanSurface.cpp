@@ -11,7 +11,7 @@ m_instance { std::move(instance) }
         throw std::runtime_error("Surface created without window manager or Vulkan instance");
     }
 
-    VK_TERMINATE_IF_FAILED(glfwCreateWindowSurface(m_instance->getInstance(), m_windowManager->getWindowHandle(), nullptr, &m_surface));
+    VK_THROW_IF_FAILED(glfwCreateWindowSurface(m_instance->getInstance(), m_windowManager->getWindowHandle(), nullptr, &m_surface));
 
     std::cout << "Vulkan surface created" << std::endl;
 }

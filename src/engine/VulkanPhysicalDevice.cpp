@@ -98,7 +98,7 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
 {
     uint32_t deviceCount = 0;
 
-    VK_TERMINATE_IF_FAILED(vkEnumeratePhysicalDevices(m_instance->getInstance(), &deviceCount, nullptr));
+    VK_THROW_IF_FAILED(vkEnumeratePhysicalDevices(m_instance->getInstance(), &deviceCount, nullptr));
     
     if (deviceCount == 0)
     {
@@ -107,7 +107,7 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
 
     std::vector<VkPhysicalDevice> devices { deviceCount };
     
-    VK_TERMINATE_IF_FAILED(vkEnumeratePhysicalDevices(m_instance->getInstance(), &deviceCount, devices.data()));
+    VK_THROW_IF_FAILED(vkEnumeratePhysicalDevices(m_instance->getInstance(), &deviceCount, devices.data()));
 
     std::vector<PhysicalDevice> devicesInfo { deviceCount };
     auto i = devicesInfo.begin();

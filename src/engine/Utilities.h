@@ -20,7 +20,7 @@ const uint32_t WINDOW_HEIGHT = 800;
 #define VK_REQUIRED_VALIDATION_LAYERS { "VK_LAYER_KHRONOS_validation" }
 #define VK_REQUIRED_VALIDATION_EXTENSION VK_EXT_DEBUG_UTILS_EXTENSION_NAME
 
-#define VK_TERMINATE_IF_FAILED(x) \
+#define VK_THROW_IF_FAILED(x) \
 do \
 { \
     VkResult result = (x); \
