@@ -12,6 +12,8 @@ class HelloTriangleApplication
 public:
     void run()
     {
+        m_vulkanManager.LoadShader("triangle_vert.spv");
+        m_vulkanManager.LoadShader("triangle_frag.spv");
         std::cout << BLUE << "Application started successfully" << RESET << std::endl;
         mainLoop();
         cleanup();

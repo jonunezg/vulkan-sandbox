@@ -8,6 +8,7 @@
 #include "VulkanLogger.h"
 #include "VulkanLogicalDevice.h"
 #include "VulkanPhysicalDevice.h"
+#include "VulkanShaderModule.h"
 #include "VulkanSurface.h"
 #include "VulkanSwapchain.h"
 #include "WindowManager.h"
@@ -24,6 +25,11 @@ public:
     VulkanManager(const VulkanManager&&) = delete;
 
     bool shouldClose() { return m_windowManager->windowShouldClose(); }
+
+    void LoadShader(const std::string& path)
+    {
+        VulkanShaderModule shader { path, m_logicalDevice };
+    }
 
 private:
     // Vulkan objects following RAII pattern

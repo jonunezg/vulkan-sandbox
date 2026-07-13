@@ -28,5 +28,7 @@ function build_clean() {
 
 function run() {
     param ([string]$build_type='Release')
-    . $PSScriptRoot\build\$build_type\vulkan.exe
+    Push-Location $PSScriptRoot\build\$build_type
+    . .\vulkan.exe
+    Pop-Location
 }

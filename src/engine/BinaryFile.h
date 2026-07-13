@@ -26,7 +26,7 @@ public:
         file.close();
     }
 
-    const std::vector<std::byte>& getData() { return m_data; }
+    const std::vector<std::byte>& getData() const { return m_data; }
 
 private:
     std::vector<std::byte> m_data;
