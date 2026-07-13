@@ -10,7 +10,7 @@ class BinaryFile
 public:
     BinaryFile(const std::string& path)
     {
-        std::ifstream file(path, std::ios::ate | std::ios::binary);
+        std::basic_ifstream<std::byte> file(path, std::ios::ate | std::ios::binary);
 
         if (!file.is_open())
         {
@@ -26,8 +26,8 @@ public:
         file.close();
     }
 
-    const std::vector<char>& getData() { return m_data; }
+    const std::vector<std::byte>& getData() { return m_data; }
 
 private:
-    std::vector<char> m_data;
+    std::vector<std::byte> m_data;
 };
