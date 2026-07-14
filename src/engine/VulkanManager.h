@@ -26,9 +26,9 @@ public:
 
     bool shouldClose() { return m_windowManager->windowShouldClose(); }
 
-    void LoadShader(const std::string& path)
+    void LoadShader(const std::string& path, ShaderType type)
     {
-        VulkanShaderModule shader { path, m_logicalDevice };
+        VulkanShaderModule shader { path, type, m_logicalDevice };
     }
 
 private:

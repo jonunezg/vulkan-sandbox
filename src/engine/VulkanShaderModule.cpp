@@ -2,8 +2,10 @@
 
 VulkanShaderModule::VulkanShaderModule(
     const std::string& path,
+    ShaderType type,
     const std::shared_ptr<VulkanLogicalDevice> logicalDevice) :
 m_file { path },
+m_type { type },
 m_logicalDevice { std::move(logicalDevice) }
 {
     if (!m_logicalDevice)
@@ -28,4 +30,34 @@ m_logicalDevice { std::move(logicalDevice) }
 VulkanShaderModule::~VulkanShaderModule()
 {
     vkDestroyShaderModule(m_logicalDevice->getDevice(), m_shaderModule, nullptr);
+}
+
+VkPipelineShaderStageCreateInfo VulkanShaderModule::getCreateInfo()
+{
+    VkShaderStageFlagBits stage;
+    
+    static_assert(Fragment == Last, "New type of shader needs Vulkan shader stage bit");
+
+    switch (m_type)
+    {
+    case ShaderType::Vertex:
+        stage = VK_SHADER_STAGE_VERTEX_BIT;
+        break;
+    case ShaderType::Fragment:
+        stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        break;
+    default:
+        throw std::runtime_error("New shader type lacks Vulkan shader stage bit, value: " + m_type);
+    }
+
+    return
+    {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+        .stage = stage,
+        .module = m_shaderModule,
+        .pName = m_entryPoint.c_str(),
+        .pSpecializationInfo = nullptr,
+    };
 }
