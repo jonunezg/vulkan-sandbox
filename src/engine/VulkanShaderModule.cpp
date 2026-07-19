@@ -30,6 +30,7 @@ m_logicalDevice { std::move(logicalDevice) }
 VulkanShaderModule::~VulkanShaderModule()
 {
     vkDestroyShaderModule(m_logicalDevice->getDevice(), m_shaderModule, nullptr);
+    std::cout << "Unloaded shader" << std::endl;
 }
 
 VkPipelineShaderStageCreateInfo VulkanShaderModule::getCreateInfo()
