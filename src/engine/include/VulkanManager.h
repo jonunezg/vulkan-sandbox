@@ -2,16 +2,16 @@
 
 #include <vector>
 
-#include "Utilities.h"
-#include "VulkanIncludes.h"
-#include "VulkanInstance.h"
-#include "VulkanLogger.h"
-#include "VulkanLogicalDevice.h"
-#include "VulkanPhysicalDevice.h"
-#include "VulkanShaderModule.h"
-#include "VulkanSurface.h"
-#include "VulkanSwapchain.h"
-#include "WindowManager.h"
+#include "../Utilities.h"
+#include "../VulkanIncludes.h"
+#include "../VulkanInstance.h"
+#include "../VulkanLogger.h"
+#include "../VulkanLogicalDevice.h"
+#include "../VulkanPhysicalDevice.h"
+#include "../VulkanShaderModule.h"
+#include "../VulkanSurface.h"
+#include "../VulkanSwapchain.h"
+#include "../WindowManager.h"
 
 class VulkanManager
 {

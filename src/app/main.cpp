@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "engine/VulkanManager.h"
+#include "VulkanManager.h"
 
 class HelloTriangleApplication
 {
