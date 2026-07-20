@@ -9,13 +9,13 @@ add_library(vulkan_device STATIC
     ./VulkanLogger.cpp
     ./VulkanLogicalDevice.cpp
     ./VulkanPhysicalDevice.cpp
-    ./VulkanShaderModule.cpp
     ./VulkanSurface.cpp
     ./VulkanSwapchain.cpp
 )
 
 target_include_directories(vulkan_device PUBLIC include)
 target_include_directories(vulkan_device PUBLIC ${glfw3_INCLUDE_DIRS})
+target_include_directories(vulkan_device PUBLIC ../utilities)
 
 target_link_libraries(vulkan_device glm::glm)
 target_link_libraries(vulkan_device ${glfw3_LIBRARIES})

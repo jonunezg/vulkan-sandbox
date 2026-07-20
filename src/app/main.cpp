@@ -5,15 +5,15 @@
 #include <stdexcept>
 #include <string>
 
-#include "VulkanDeviceManager.h"
+#include "VulkanPipelineManager.h"
 
 class HelloTriangleApplication
 {
 public:
     void run()
     {
-        m_vulkanDeviceManager.LoadShader("triangle_vert.spv", ShaderType::Vertex);
-        m_vulkanDeviceManager.LoadShader("triangle_frag.spv", ShaderType::Fragment);
+        m_vulkanPipelineManager.LoadShader("triangle_vert.spv", ShaderType::Vertex);
+        m_vulkanPipelineManager.LoadShader("triangle_frag.spv", ShaderType::Fragment);
         std::cout << BLUE << "Application started successfully" << RESET << std::endl;
         mainLoop();
         cleanup();
@@ -23,7 +23,7 @@ private:
 
     void mainLoop()
     {    
-        while (!m_vulkanDeviceManager.shouldClose())
+        while (!m_vulkanPipelineManager.shouldClose())
         {
             glfwPollEvents();
         }
@@ -32,7 +32,7 @@ private:
     void cleanup() {        
     }
 
-    VulkanDeviceManager m_vulkanDeviceManager;
+    VulkanPipelineManager m_vulkanPipelineManager;
 };
 
 int main()

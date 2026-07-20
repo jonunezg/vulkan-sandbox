@@ -2,16 +2,15 @@
 
 #include <vector>
 
-#include "../Utilities.h"
-#include "../VulkanIncludes.h"
-#include "../VulkanInstance.h"
-#include "../VulkanLogger.h"
-#include "../VulkanLogicalDevice.h"
-#include "../VulkanPhysicalDevice.h"
-#include "../VulkanShaderModule.h"
-#include "../VulkanSurface.h"
-#include "../VulkanSwapchain.h"
-#include "../WindowManager.h"
+#include "Utilities.h"
+#include "VulkanIncludes.h"
+#include "VulkanInstance.h"
+#include "VulkanLogger.h"
+#include "VulkanLogicalDevice.h"
+#include "VulkanPhysicalDevice.h"
+#include "VulkanSurface.h"
+#include "VulkanSwapchain.h"
+#include "WindowManager.h"
 
 class VulkanDeviceManager
 {
@@ -26,10 +25,7 @@ public:
 
     bool shouldClose() { return m_windowManager->windowShouldClose(); }
 
-    void LoadShader(const std::string& path, ShaderType type)
-    {
-        VulkanShaderModule shader { path, type, m_logicalDevice };
-    }
+    const std::shared_ptr<VulkanLogicalDevice> getLogicalDevice() const { return m_logicalDevice; }
 
 private:
     // Vulkan objects following RAII pattern

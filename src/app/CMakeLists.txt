@@ -6,7 +6,7 @@ add_executable(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${glfw3_INCLUDE_DIRS})
 
-target_link_libraries(${PROJECT_NAME} vulkan_device)
+target_link_libraries(${PROJECT_NAME} vulkan_pipeline)
 target_link_libraries(${PROJECT_NAME} glm::glm)
 target_link_libraries(${PROJECT_NAME} ${glfw3_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} vulkan-headers::vulkan-headers)
