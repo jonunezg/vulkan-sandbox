@@ -13,16 +13,16 @@
 #include "../VulkanSwapchain.h"
 #include "../WindowManager.h"
 
-class VulkanManager
+class VulkanDeviceManager
 {
 public:
-    VulkanManager();
-    ~VulkanManager();
+    VulkanDeviceManager();
+    ~VulkanDeviceManager();
 
-    VulkanManager(VulkanManager&) = delete;
-    VulkanManager(const VulkanManager&) = delete;
-    VulkanManager(VulkanManager&&) = delete;
-    VulkanManager(const VulkanManager&&) = delete;
+    VulkanDeviceManager(VulkanDeviceManager&) = delete;
+    VulkanDeviceManager(const VulkanDeviceManager&) = delete;
+    VulkanDeviceManager(VulkanDeviceManager&&) = delete;
+    VulkanDeviceManager(const VulkanDeviceManager&&) = delete;
 
     bool shouldClose() { return m_windowManager->windowShouldClose(); }
 

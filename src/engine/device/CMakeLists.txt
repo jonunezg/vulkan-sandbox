@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 
 add_library(vulkan_device STATIC
+    ./VulkanDeviceManager.cpp
     ./VulkanExtensions.cpp
     ./VulkanImageView.cpp
     ./VulkanInstance.cpp
     ./VulkanLayers.cpp
     ./VulkanLogger.cpp
-    ./VulkanManager.cpp
     ./VulkanLogicalDevice.cpp
     ./VulkanPhysicalDevice.cpp
     ./VulkanShaderModule.cpp
