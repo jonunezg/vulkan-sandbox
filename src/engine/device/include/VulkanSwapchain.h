@@ -16,6 +16,9 @@ public:
         const std::shared_ptr<VulkanSurface> surface,
         const std::shared_ptr<WindowManager> windowManager);
     ~VulkanSwapchain();
+
+    const VkExtent2D& getSwapchainExtent() const { return m_extent; }
+
 private:
 
     VkExtent2D selectSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);

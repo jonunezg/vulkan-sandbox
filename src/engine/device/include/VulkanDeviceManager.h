@@ -26,6 +26,7 @@ public:
     bool shouldClose() { return m_windowManager->windowShouldClose(); }
 
     const std::shared_ptr<VulkanLogicalDevice> getLogicalDevice() const { return m_logicalDevice; }
+    const VkExtent2D& getSwapchainExtent() const { return m_swapchain.getSwapchainExtent(); }
 
 private:
     // Vulkan objects following RAII pattern
