@@ -14,13 +14,13 @@ public:
     VulkanPipelineManager(VulkanPipelineManager&&) = delete;
     VulkanPipelineManager(const VulkanPipelineManager&&) = delete;
 
-    bool shouldClose() { return m_vulkanDeviceManager.shouldClose(); }
+    bool shouldClose() { return m_vulkanDeviceManager->shouldClose(); }
 
     void LoadShader(const std::string& path, ShaderType type)
     {
-        VulkanShaderModule shader { path, type, m_vulkanDeviceManager.getLogicalDevice() };
+        VulkanShaderModule shader { path, type, m_vulkanDeviceManager->getLogicalDevice() };
     }
 
 private:
-    VulkanDeviceManager m_vulkanDeviceManager;
+    const std::shared_ptr<VulkanDeviceManager> m_vulkanDeviceManager = std::make_shared<VulkanDeviceManager>();
 };

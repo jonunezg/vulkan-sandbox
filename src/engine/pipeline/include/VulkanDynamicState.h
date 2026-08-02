@@ -1,0 +1,14 @@
+#pragma once
+
+#include "Utilities.h"
+#include "VulkanDeviceManager.h"
+#include "VulkanIncludes.h"
+
+class VulkanDynamicState
+{
+public:
+    VulkanDynamicState(const std::shared_ptr<VulkanDeviceManager> vulkanDeviceManager);
+
+private:
+    const std::shared_ptr<VulkanDeviceManager> m_vulkanDeviceManager;
+};
