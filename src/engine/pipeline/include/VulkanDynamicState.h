@@ -11,4 +11,7 @@ public:
 
 private:
     const std::shared_ptr<VulkanDeviceManager> m_vulkanDeviceManager;
+
+    VkViewport m_viewport;
+    VkRect2D m_scissor;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "VulkanDeviceManager.h"
+#include "VulkanDynamicState.h"
 #include "VulkanShaderModule.h"
 
 class VulkanPipelineManager
@@ -23,4 +24,5 @@ public:
 
 private:
     const std::shared_ptr<VulkanDeviceManager> m_vulkanDeviceManager = std::make_shared<VulkanDeviceManager>();
+    const VulkanDynamicState m_vulkanDynamicState{ m_vulkanDeviceManager };
 };
