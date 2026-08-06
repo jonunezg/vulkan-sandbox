@@ -51,7 +51,56 @@ VulkanPipelineManager::VulkanPipelineManager()
         .alphaToCoverageEnable = VK_FALSE,
         .alphaToOneEnable = VK_FALSE,
     };
+
+    VkPipelineColorBlendAttachmentState colorBlendAttachment
+    {
+        // blendEnable ? final = use struct operators : final = new
+        .blendEnable = VK_FALSE,
+        // final.rgb = (new.rgb * srcColorBlendFactor) colorBlendOp (old.rgb * dstColorBlendFactor)
+        .srcColorBlendFactor = VK_BLEND_FACTOR_ONE,
+        .dstColorBlendFactor = VK_BLEND_FACTOR_ZERO,
+        .colorBlendOp = VK_BLEND_OP_ADD,
+        // final.a = (new.a * srcAlphaBlendFactor) alphaBlendOp (old.a * dstAlphaBlendFactor)
+        .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,
+        .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
+        .alphaBlendOp = VK_BLEND_OP_ADD,
+        // final &= colorWriteMask. This step is always applied
+        .colorWriteMask = VK_COLOR_COMPONENT_R_BIT
+                        | VK_COLOR_COMPONENT_G_BIT
+                        | VK_COLOR_COMPONENT_B_BIT
+                        | VK_COLOR_COMPONENT_A_BIT,
+    };
+
+    VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo
+    {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+        .logicOpEnable = VK_FALSE,
+        .logicOp = VK_LOGIC_OP_COPY,
+        .attachmentCount = 1,
+        .pAttachments = &colorBlendAttachment,
+        .blendConstants = { 0.0f, 0.0f, 0.0f, 0.0f },
+    };
+
+    VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo
+    {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+        .setLayoutCount = 0,
+        .pSetLayouts = nullptr,
+        .pushConstantRangeCount = 0,
+        .pPushConstantRanges = nullptr,
+    };
+
+    VK_THROW_IF_FAILED(vkCreatePipelineLayout(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &pipelineLayoutCreateInfo, nullptr, &m_vulkanPipelineLayout));
+
+    std::cout << "Vulkan pipeline layout created" << std::endl;
 }
 
 VulkanPipelineManager::~VulkanPipelineManager()
-{}
+{
+    vkDestroyPipelineLayout(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanPipelineLayout, nullptr);
+    std::cout << "Vulkan pipeline layout destroyed" << std::endl;
+}
