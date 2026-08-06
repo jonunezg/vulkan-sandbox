@@ -19,6 +19,8 @@ public:
 
     const VkExtent2D& getSwapchainExtent() const { return m_extent; }
 
+    const VkFormat& getSwapchainformat() const { return m_format.format; }
+
 private:
 
     VkExtent2D selectSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
