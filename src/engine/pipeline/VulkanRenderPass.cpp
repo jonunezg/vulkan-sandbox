@@ -1,7 +1,13 @@
 #include "VulkanRenderPass.h"
 
-VulkanRenderPass::VulkanRenderPass(const VkFormat& format)
+VulkanRenderPass::VulkanRenderPass(const VkDevice& device, const VkFormat& format) :
+m_device { device }
 {
+    if (!m_device)
+    {
+        throw std::runtime_error("Render pass created without logical device");
+    }
+
     VkAttachmentDescription attachment
     {
         .flags = 0,
@@ -14,9 +20,49 @@ VulkanRenderPass::VulkanRenderPass(const VkFormat& format)
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
         .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
     };
+
+    // This attachment reference is used by the frag shader: layout(location = 0) out vec4 outColor
+    VkAttachmentReference attachmentReference
+    {
+        .attachment = 0, // Index of attachment array
+        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+    };
+
+    VkSubpassDescription subpassDescription
+    {
+        .flags = 0,
+        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+        .inputAttachmentCount = 0,
+        .pInputAttachments = nullptr,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &attachmentReference,
+        .pResolveAttachments = nullptr,
+        .pDepthStencilAttachment = nullptr,
+        .preserveAttachmentCount = 0,
+        .pPreserveAttachments = nullptr,
+    };
+
+    VkRenderPassCreateInfo renderPassCreateInfo
+    {
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+        .attachmentCount = 1,
+        .pAttachments = &attachment,
+        .subpassCount = 1,
+        .pSubpasses = &subpassDescription,
+        .dependencyCount = 0,
+        .pDependencies = nullptr,
+    };
+
+    VK_THROW_IF_FAILED(vkCreateRenderPass(m_device, &renderPassCreateInfo, nullptr, &m_renderPass));
+
+    std::cout << "Vulkan render pass created" << std::endl;
 }
 
 VulkanRenderPass::~VulkanRenderPass()
 {
+    vkDestroyRenderPass(m_device, m_renderPass, nullptr);
 
+    std::cout << "Vulkan render pass destroyed" << std::endl;
 }

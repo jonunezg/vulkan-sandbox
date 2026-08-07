@@ -26,7 +26,7 @@ public:
 private:
     const std::shared_ptr<VulkanDeviceManager> m_vulkanDeviceManager = std::make_shared<VulkanDeviceManager>();
     const VulkanDynamicState m_vulkanDynamicState{ m_vulkanDeviceManager };
-    const VulkanRenderPass m_vulkanRenderPass{ m_vulkanDeviceManager->getSwapchainFormat() };
+    const VulkanRenderPass m_vulkanRenderPass{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanDeviceManager->getSwapchainFormat() };
 
     VkPipelineLayout m_vulkanPipelineLayout;
 };

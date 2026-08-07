@@ -6,7 +6,11 @@
 class VulkanRenderPass
 {
 public:
-    VulkanRenderPass(const VkFormat& format);
+    VulkanRenderPass(const VkDevice& device, const VkFormat& format);
 
     ~VulkanRenderPass();
+
+private:
+    const VkDevice& m_device;
+    VkRenderPass m_renderPass;
 };
