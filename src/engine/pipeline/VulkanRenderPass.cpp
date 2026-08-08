@@ -58,12 +58,6 @@ m_device { device }
     VK_THROW_IF_FAILED(vkCreateRenderPass(m_device, &renderPassCreateInfo, nullptr, &m_renderPass));
 
     std::cout << "Vulkan render pass created" << std::endl;
-
-    VkGraphicsPipelineCreateInfo pipelineCreateInfo
-    {
-        .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-        .pNext = nullptr,
-    };
 }
 
 VulkanRenderPass::~VulkanRenderPass()

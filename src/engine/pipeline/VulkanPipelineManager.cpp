@@ -98,10 +98,22 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
 
     std::cout << "Vulkan pipeline layout created" << std::endl;
 
+    std::vector<VkPipelineShaderStageCreateInfo> shadersCreateInfo {};
+    shadersCreateInfo.reserve(shaders.size());
+    m_shaders.reserve(shaders.size());
     for(const auto& shader : shaders)
     {
         m_shaders.emplace_back(shader, m_vulkanDeviceManager->getLogicalDevice()->getDevice());
+        shadersCreateInfo.emplace_back(m_shaders.back().getCreateInfo());
     }
+
+    VkGraphicsPipelineCreateInfo pipelineCreateInfo
+    {
+        .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+        .pNext = nullptr,
+        .stageCount = 2,
+        .pStages = shadersCreateInfo.data(),
+    };
 }
 
 VulkanPipelineManager::~VulkanPipelineManager()
