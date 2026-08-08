@@ -35,5 +35,5 @@ private:
 
     VkSwapchainKHR m_swapchain;
     std::vector<VkImage> m_images;
-    std::vector<std::unique_ptr<VulkanImageView>> m_imageViews;
+    std::vector<VulkanImageView> m_imageViews;
 };

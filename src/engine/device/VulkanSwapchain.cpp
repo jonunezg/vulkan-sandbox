@@ -50,9 +50,10 @@ VkExtent2D VulkanSwapchain::selectSwapExtent(const VkSurfaceCapabilitiesKHR& cap
 
 void VulkanSwapchain::createImageViews()
 {
+    m_imageViews.reserve(m_images.size());
     for (const auto& image : m_images)
     {
-        m_imageViews.push_back( std::make_unique<VulkanImageView>(m_logicalDevice, m_format, image) );
+        m_imageViews.emplace_back(m_logicalDevice->getDevice(), m_format, image);
     }
 }
 

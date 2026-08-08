@@ -7,14 +7,19 @@
 class VulkanImageView
 {
 public:
-    VulkanImageView(const std::shared_ptr<VulkanLogicalDevice> logicalDevice, const VkSurfaceFormatKHR& format, const VkImage& image);
+    VulkanImageView(const VkDevice device, const VkSurfaceFormatKHR& format, const VkImage& image);
     ~VulkanImageView();
 
     VulkanImageView(const VulkanImageView&) = delete;
     VulkanImageView(VulkanImageView&) = delete;
     VulkanImageView(const VulkanImageView&&) = delete;
-    VulkanImageView(VulkanImageView&&) = delete;
+    VulkanImageView(VulkanImageView&& other) :
+    m_device { other.m_device },
+    m_imageView { other.m_imageView }
+    {
+        other.m_imageView = VK_NULL_HANDLE;
+    }
 private:
-    std::shared_ptr<VulkanLogicalDevice> m_logicalDevice;
+    const VkDevice m_device;
     VkImageView m_imageView;
 };

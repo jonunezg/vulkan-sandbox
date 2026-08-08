@@ -1,9 +1,9 @@
 #include "VulkanImageView.h"
 
-VulkanImageView::VulkanImageView(const std::shared_ptr<VulkanLogicalDevice> logicalDevice, const VkSurfaceFormatKHR& format, const VkImage& image) :
-m_logicalDevice { std::move(logicalDevice) }
+VulkanImageView::VulkanImageView(const VkDevice device, const VkSurfaceFormatKHR& format, const VkImage& image) :
+m_device { device }
 {
-    if (!m_logicalDevice)
+    if (!m_device)
     {
         throw std::runtime_error("Image view created without logical device");
     }
@@ -33,10 +33,17 @@ m_logicalDevice { std::move(logicalDevice) }
         }
     };
 
-    VK_THROW_IF_FAILED(vkCreateImageView(m_logicalDevice->getDevice(), &createInfo, nullptr, &m_imageView));
+    VK_THROW_IF_FAILED(vkCreateImageView(m_device, &createInfo, nullptr, &m_imageView));
+
+    std::cout << "Vulkan image view created: " << m_imageView << std::endl;
 }
 
 VulkanImageView::~VulkanImageView()
 {
-    vkDestroyImageView(m_logicalDevice->getDevice(), m_imageView, nullptr);\
+    if (m_imageView != VK_NULL_HANDLE)
+    {
+        vkDestroyImageView(m_device, m_imageView, nullptr);
+
+        std::cout << "Vulkan image view destroyed: " << m_imageView << std::endl;
+    }
 }
