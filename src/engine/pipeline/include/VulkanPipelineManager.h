@@ -25,4 +25,6 @@ private:
 
     VkPipelineLayout m_vulkanPipelineLayout;
     std::vector<VulkanShaderModule> m_shaders;
+
+    VkPipeline m_pipeline;
 };

@@ -10,6 +10,8 @@ public:
 
     ~VulkanRenderPass();
 
+    const VkRenderPass& getRenderPass() const { return m_renderPass; }
+
 private:
     const VkDevice& m_device;
     VkRenderPass m_renderPass;

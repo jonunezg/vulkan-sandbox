@@ -120,11 +120,34 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
         .pInputAssemblyState = &inputAssemblyCreateInfo,
         .pTessellationState = nullptr,
         .pViewportState = &viewportStateCreateInfo,
+        .pRasterizationState = &rasterizationStateCreateInfo,
+        .pMultisampleState = &multisampleStateCreateInfo,
+        .pDepthStencilState = nullptr,
+        .pColorBlendState = &colorBlendStateCreateInfo,
+        .pDynamicState = &dynamicStateCreateInfo,
+        .layout = m_vulkanPipelineLayout,
+        .renderPass = m_vulkanRenderPass.getRenderPass(),
+        .subpass = 0,
+        .basePipelineHandle = VK_NULL_HANDLE,
+        .basePipelineIndex = -1,
     };
+
+    VK_THROW_IF_FAILED(vkCreateGraphicsPipelines(
+        m_vulkanDeviceManager->getLogicalDevice()->getDevice(),
+        VK_NULL_HANDLE,
+        1,
+        &pipelineCreateInfo,
+        nullptr,
+        &m_pipeline));
+
+    std::cout << "Vulkan graphics pipeline created" << std::endl;
 }
 
 VulkanPipelineManager::~VulkanPipelineManager()
 {
+    vkDestroyPipeline(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_pipeline, nullptr);
+    std::cout << "Vulkan graphics pipeline destroyed" << std::endl;
+
     vkDestroyPipelineLayout(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanPipelineLayout, nullptr);
     std::cout << "Vulkan pipeline layout destroyed" << std::endl;
 }
