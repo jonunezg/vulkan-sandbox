@@ -1,6 +1,6 @@
 #include "VulkanPipelineManager.h"
 
-VulkanPipelineManager::VulkanPipelineManager()
+VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
 {
     VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo
     {
@@ -97,6 +97,11 @@ VulkanPipelineManager::VulkanPipelineManager()
     VK_THROW_IF_FAILED(vkCreatePipelineLayout(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &pipelineLayoutCreateInfo, nullptr, &m_vulkanPipelineLayout));
 
     std::cout << "Vulkan pipeline layout created" << std::endl;
+
+    for(const auto& shader : shaders)
+    {
+        m_shaders.emplace_back(shader, m_vulkanDeviceManager->getLogicalDevice()->getDevice());
+    }
 }
 
 VulkanPipelineManager::~VulkanPipelineManager()

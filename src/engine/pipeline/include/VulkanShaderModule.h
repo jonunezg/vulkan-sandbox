@@ -12,14 +12,20 @@ enum ShaderType
     Last = Fragment,
 };
 
+typedef struct
+{
+    ShaderType type;
+    const std::string& path;
+} Shader;
+
 class VulkanShaderModule
 {
 public:
-    VulkanShaderModule(const std::string& path, ShaderType type, const std::shared_ptr<VulkanLogicalDevice> logicalDevice);
+    VulkanShaderModule(const Shader& definition, const VkDevice& device);
 
     VulkanShaderModule(VulkanShaderModule&) = delete;
     VulkanShaderModule(const VulkanShaderModule&) = delete;
-    VulkanShaderModule(VulkanShaderModule&&) = delete;
+    VulkanShaderModule(VulkanShaderModule&& other); // Support vector storage
     VulkanShaderModule(const VulkanShaderModule&&) = delete;
 
     ~VulkanShaderModule();
@@ -28,7 +34,7 @@ public:
 private:
     const BinaryFile m_file;
     const ShaderType m_type;
-    const std::shared_ptr<VulkanLogicalDevice> m_logicalDevice;
+    const VkDevice m_device;
 
     const std::string m_entryPoint = "main";
 

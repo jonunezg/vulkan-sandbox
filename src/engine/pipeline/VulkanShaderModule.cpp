@@ -1,14 +1,13 @@
 #include "VulkanShaderModule.h"
 
 VulkanShaderModule::VulkanShaderModule(
-    const std::string& path,
-    ShaderType type,
-    const std::shared_ptr<VulkanLogicalDevice> logicalDevice) :
-m_file { path },
-m_type { type },
-m_logicalDevice { std::move(logicalDevice) }
+    const Shader& definition,
+    const VkDevice& device) :
+m_file { definition.path },
+m_type { definition.type },
+m_device { std::move(device) }
 {
-    if (!m_logicalDevice)
+    if (!m_device)
     {
         throw std::runtime_error("Shader module created without logical device");
     }
@@ -22,15 +21,28 @@ m_logicalDevice { std::move(logicalDevice) }
         .pCode = reinterpret_cast<const uint32_t*>(m_file.getData().data()),
     };
 
-    VK_THROW_IF_FAILED(vkCreateShaderModule(m_logicalDevice->getDevice(), &createInfo, nullptr, &m_shaderModule));
+    VK_THROW_IF_FAILED(vkCreateShaderModule(m_device, &createInfo, nullptr, &m_shaderModule));
 
-    std::cout << "Loaded shader: " << path << ", size: " << m_file.getData().size() << std::endl;
+    std::cout << "Loaded shader: " << definition.path << ", size: " << m_file.getData().size() << ", address: " << m_shaderModule << std::endl;
+}
+
+VulkanShaderModule::VulkanShaderModule(VulkanShaderModule&& other) :
+m_file { other.m_file },
+m_type { other.m_type },
+m_device { std::move(other.m_device) },
+m_entryPoint { std::move(other.m_entryPoint) },
+m_shaderModule { other.m_shaderModule }
+{
+    other.m_shaderModule = nullptr;
 }
 
 VulkanShaderModule::~VulkanShaderModule()
 {
-    vkDestroyShaderModule(m_logicalDevice->getDevice(), m_shaderModule, nullptr);
-    std::cout << "Unloaded shader" << std::endl;
+    if (m_shaderModule)
+    {
+        vkDestroyShaderModule(m_device, m_shaderModule, nullptr);
+        std::cout << "Unloaded shader from address: " << m_shaderModule << std::endl;
+    }
 }
 
 VkPipelineShaderStageCreateInfo VulkanShaderModule::getCreateInfo()

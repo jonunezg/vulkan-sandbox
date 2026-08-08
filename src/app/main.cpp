@@ -12,8 +12,6 @@ class HelloTriangleApplication
 public:
     void run()
     {
-        m_vulkanPipelineManager.LoadShader("triangle_vert.spv", ShaderType::Vertex);
-        m_vulkanPipelineManager.LoadShader("triangle_frag.spv", ShaderType::Fragment);
         std::cout << BLUE << "Application started successfully" << RESET << std::endl;
         mainLoop();
         cleanup();
@@ -32,7 +30,7 @@ private:
     void cleanup() {        
     }
 
-    VulkanPipelineManager m_vulkanPipelineManager;
+    VulkanPipelineManager m_vulkanPipelineManager {std::vector<Shader>{ { ShaderType::Vertex, "triangle_vert.spv" }, { ShaderType::Fragment , "triangle_frag.spv" } }};
 };
 
 int main()

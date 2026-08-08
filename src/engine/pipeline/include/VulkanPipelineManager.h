@@ -8,7 +8,7 @@
 class VulkanPipelineManager
 {
 public:
-    VulkanPipelineManager();
+    VulkanPipelineManager(const std::vector<Shader>& shaders);
     ~VulkanPipelineManager();
 
     VulkanPipelineManager(VulkanPipelineManager&) = delete;
@@ -18,15 +18,11 @@ public:
 
     bool shouldClose() { return m_vulkanDeviceManager->shouldClose(); }
 
-    void LoadShader(const std::string& path, ShaderType type)
-    {
-        VulkanShaderModule shader { path, type, m_vulkanDeviceManager->getLogicalDevice() };
-    }
-
 private:
     const std::shared_ptr<VulkanDeviceManager> m_vulkanDeviceManager = std::make_shared<VulkanDeviceManager>();
     const VulkanDynamicState m_vulkanDynamicState{ m_vulkanDeviceManager };
     const VulkanRenderPass m_vulkanRenderPass{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanDeviceManager->getSwapchainFormat() };
 
     VkPipelineLayout m_vulkanPipelineLayout;
+    std::vector<VulkanShaderModule> m_shaders;
 };
