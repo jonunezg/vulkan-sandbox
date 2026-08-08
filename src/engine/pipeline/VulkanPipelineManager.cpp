@@ -107,12 +107,19 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
         shadersCreateInfo.emplace_back(m_shaders.back().getCreateInfo());
     }
 
+    const auto viewportStateCreateInfo = m_vulkanDynamicState.getViewportStateCreateInfo();
+    const auto dynamicStateCreateInfo = m_vulkanDynamicState.getDynamicStateCreateInfo();
+
     VkGraphicsPipelineCreateInfo pipelineCreateInfo
     {
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
         .pNext = nullptr,
         .stageCount = 2,
         .pStages = shadersCreateInfo.data(),
+        .pVertexInputState = &vertexInputCreateInfo,
+        .pInputAssemblyState = &inputAssemblyCreateInfo,
+        .pTessellationState = nullptr,
+        .pViewportState = &viewportStateCreateInfo,
     };
 }
 

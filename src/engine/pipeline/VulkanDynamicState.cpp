@@ -10,7 +10,7 @@ m_vulkanDeviceManager { std::move(deviceManager) }
 
     const auto& extent = m_vulkanDeviceManager->getSwapchainExtent();
 
-    VkViewport m_viewport
+    m_viewport =
     {
         .x = 0.0f,
         .y = 0.0f,
@@ -20,19 +20,22 @@ m_vulkanDeviceManager { std::move(deviceManager) }
         .maxDepth = 1.0f,
     };
 
-    VkRect2D m_scissor
+    m_scissor =
     {
         .offset = { 0, 0 },
         .extent = extent,
     };
 
-    std::vector<VkDynamicState> m_dynamicStates = 
+    m_dynamicStates = 
     {
         VK_DYNAMIC_STATE_VIEWPORT,
         VK_DYNAMIC_STATE_SCISSOR
     };
+}
 
-    const VkPipelineDynamicStateCreateInfo m_dynamicStateCreateInfo
+const VkPipelineDynamicStateCreateInfo VulkanDynamicState::getDynamicStateCreateInfo() const
+{
+    return
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
         .pNext = nullptr,
@@ -40,8 +43,11 @@ m_vulkanDeviceManager { std::move(deviceManager) }
         .dynamicStateCount = static_cast<uint32_t>(m_dynamicStates.size()),
         .pDynamicStates = m_dynamicStates.data(),
     };
+}
 
-    VkPipelineViewportStateCreateInfo viewportStateCreateInfo
+const VkPipelineViewportStateCreateInfo VulkanDynamicState::getViewportStateCreateInfo() const
+{
+    return
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
         .pNext = nullptr,
