@@ -2,6 +2,7 @@
 
 #include "VulkanDeviceManager.h"
 #include "VulkanDynamicState.h"
+#include "VulkanFramebuffers.h"
 #include "VulkanRenderPass.h"
 #include "VulkanShaderModule.h"
 
@@ -22,6 +23,7 @@ private:
     const std::shared_ptr<VulkanDeviceManager> m_vulkanDeviceManager = std::make_shared<VulkanDeviceManager>();
     const VulkanDynamicState m_vulkanDynamicState{ m_vulkanDeviceManager };
     const VulkanRenderPass m_vulkanRenderPass{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanDeviceManager->getSwapchainFormat() };
+    const VulkanFrameBuffers m_vulkanFramebuffers{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanDeviceManager->getSwapchain(), m_vulkanRenderPass.getRenderPass() };
 
     VkPipelineLayout m_vulkanPipelineLayout;
     std::vector<VulkanShaderModule> m_shaders;

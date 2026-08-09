@@ -28,6 +28,7 @@ public:
     const std::shared_ptr<VulkanLogicalDevice> getLogicalDevice() const { return m_logicalDevice; }
     const VkExtent2D& getSwapchainExtent() const { return m_swapchain.getSwapchainExtent(); }
     const VkFormat& getSwapchainFormat() const { return m_swapchain.getSwapchainformat(); }
+    const VulkanSwapchain& getSwapchain() const { return m_swapchain; }
 
 private:
     // Vulkan objects following RAII pattern

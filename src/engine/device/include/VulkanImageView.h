@@ -19,6 +19,8 @@ public:
     {
         other.m_imageView = VK_NULL_HANDLE;
     }
+
+    const VkImageView& getRawImageView() const { return m_imageView; }
 private:
     const VkDevice m_device;
     VkImageView m_imageView;

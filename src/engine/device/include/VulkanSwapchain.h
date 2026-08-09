@@ -21,6 +21,8 @@ public:
 
     const VkFormat& getSwapchainformat() const { return m_format.format; }
 
+    const std::vector<VulkanImageView>& getImageViews() const { return m_imageViews; }
+
 private:
 
     VkExtent2D selectSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);

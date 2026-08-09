@@ -58,6 +58,7 @@ m_physicalDevice { std::move(physicalDevice) }
     vkGetDeviceQueue(m_device, m_physicalDevice->getSelectedDevice().graphicQueueIndex.value(), 0, &m_graphicsQueue);
     vkGetDeviceQueue(m_device, m_physicalDevice->getSelectedDevice().presentQueueIndex.value(), 0, &m_presentQueue);
 
+    std::cout << "Vulkan logical device created: " << m_device << std::endl;
     std::cout << "Graphics queue: " << m_graphicsQueue << std::endl;
     std::cout << "Present queue: " << m_presentQueue << std::endl;
 }
@@ -65,5 +66,5 @@ m_physicalDevice { std::move(physicalDevice) }
 VulkanLogicalDevice::~VulkanLogicalDevice()
 {
     vkDestroyDevice(m_device, nullptr);
-    std::cout << "Vulkan logical device destroyed" << std::endl;
+    std::cout << "Vulkan logical device destroyed: " << m_device << std::endl;
 }
