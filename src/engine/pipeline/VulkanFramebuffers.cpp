@@ -30,7 +30,7 @@ m_device { device }
         VK_THROW_IF_FAILED(vkCreateFramebuffer(m_device, &framebufferCreateInfo, nullptr, &newFramebuffer));
         m_framebuffers.emplace_back(newFramebuffer);
 
-        std::cout << "Vulkan framebuffer created: " << m_framebuffers.back() << std::endl;
+        LOG_ENGINE_INFO("Vulkan framebuffer created: " << m_framebuffers.back());
     }
 }
 
@@ -41,6 +41,6 @@ VulkanFrameBuffers::~VulkanFrameBuffers()
     {
         vkDestroyFramebuffer(m_device, framebuffer, nullptr);
 
-        std::cout << "Vulkan framebuffer destroyed: " << framebuffer << std::endl;
+        LOG_ENGINE_INFO("Vulkan framebuffer destroyed: " << framebuffer);
     }
 }

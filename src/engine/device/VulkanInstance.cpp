@@ -34,11 +34,11 @@ VulkanInstance::VulkanInstance()
 
     VK_THROW_IF_FAILED(vkCreateInstance(&createInfo, nullptr, &m_instance));
 
-    std::cout << "Vulkan instance created" << std::endl;
+    LOG_ENGINE_INFO("Vulkan instance created: " << m_instance);
 }
 
 VulkanInstance::~VulkanInstance()
 {
     vkDestroyInstance(m_instance, nullptr);
-    std::cout << "Vulkan instance destroyed" << std::endl;
+    LOG_ENGINE_INFO("Vulkan instance destroyed: " << m_instance);
 }

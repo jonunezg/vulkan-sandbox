@@ -3,6 +3,7 @@
 #include "BinaryFile.h"
 #include "Utilities.h"
 #include "VulkanIncludes.h"
+#include "VulkanLogger.h"
 #include "VulkanLogicalDevice.h"
 
 enum ShaderType

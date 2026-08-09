@@ -12,9 +12,9 @@ public:
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);   // Don't start OpenGL
             glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);     // No resizable window
 
-            std::cout << "Creating window" << std::endl;
+            LOG_ENGINE_INFO("Creating window");
             m_window = glfwCreateWindow(WINDOW_HEIGHT, WINDOW_WIDTH, "Vulkan app", nullptr, nullptr);
-            std::cout << "Window created" << std::endl;
+            LOG_ENGINE_INFO("Window created");
 
             if(m_window == nullptr)
             {
@@ -27,7 +27,7 @@ public:
     {
         if (m_window) {
             glfwDestroyWindow(m_window);
-            std::cout << "Window destroyed" << std::endl;
+            LOG_ENGINE_INFO("Window destroyed");
         }
     }
 

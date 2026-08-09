@@ -3,6 +3,7 @@
 #include "Utilities.h"
 #include "VulkanIncludes.h"
 #include "VulkanLayers.h"
+#include "VulkanLogger.h"
 
 std::vector<VkLayerProperties> getAvailableValidationLayers()
 {
@@ -18,19 +19,19 @@ std::vector<VkLayerProperties> getAvailableValidationLayers()
 void dumpAvailableValidationLayers()
 {
     const auto layers = getAvailableValidationLayers();
-    std::cout << "Available Vulkan validation layers:" << std::endl;
+    LOG_ENGINE_VERBOSE("Available Vulkan validation layers:");
     for(const auto& layer : layers)
     {
-        std::cout << "\t" << layer.layerName << ": " << layer.description << std::endl;
+        LOG_ENGINE_VERBOSE("\t" << layer.layerName << ": " << layer.description);
     }
 }
 
 void dumpRequiredValidationLayers(const std::vector<const char*>& layers)
 {
-    std::cout << "Required " << layers.size() << " Vulkan validation layers:" << std::endl;
+    LOG_ENGINE_INFO("Required " << layers.size() << " Vulkan validation layers:");
     for (const auto& layer : layers)
     {
-        std::cout << "\t" << layer << std::endl;
+        LOG_ENGINE_INFO("\t" << layer);
     }
 }
 

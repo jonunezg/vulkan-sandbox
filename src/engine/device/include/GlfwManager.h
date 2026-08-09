@@ -2,6 +2,7 @@
 
 #include "Utilities.h"
 #include "VulkanIncludes.h"
+#include "VulkanLogger.h"
 
 class GlfwManager
 {
@@ -9,7 +10,7 @@ public:
     GlfwManager() :
     m_glfwStatus { glfwInit() }
     {
-        std::cout << "GLFW initialized" << std::endl;
+        LOG_ENGINE_INFO("GLFW initialized");
     }
 
     ~GlfwManager()
@@ -17,7 +18,7 @@ public:
         if (glfwOk())
         {
             glfwTerminate();
-            std::cout << "GLFW terminated" << std::endl;
+            LOG_ENGINE_INFO("GLFW terminated");
         }
     }
 

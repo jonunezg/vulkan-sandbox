@@ -1,6 +1,7 @@
 #include <vector>
 
 #include "VulkanExtensions.h"
+#include "VulkanLogger.h"
 #include "VulkanPhysicalDevice.h"
 
 
@@ -8,13 +9,13 @@
 
 void dumpPhysicalDevices(const std::vector<PhysicalDevice>& devices)
 {
-    std::cout << "Physical devices found" << std::endl;
+    LOG_ENGINE_INFO("Physical devices found");
 
     for(const auto& device : devices)
     {
         VkPhysicalDeviceProperties properties;
 
-        std::cout << "\t" << device.properties.deviceName << std::endl;
+        LOG_ENGINE_INFO("\t" << device.properties.deviceName);
     }
 }
 
@@ -188,5 +189,5 @@ m_surface { std::move(surface) }
 
 VulkanPhysicalDevice::~VulkanPhysicalDevice()
 {
-    std::cout << "Vulkan physical device destroyed" << std::endl;
+    LOG_ENGINE_INFO("Vulkan physical device destroyed");
 }

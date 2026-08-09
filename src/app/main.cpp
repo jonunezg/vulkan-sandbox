@@ -12,7 +12,7 @@ class HelloTriangleApplication
 public:
     void run()
     {
-        std::cout << BLUE << "Application started successfully" << RESET << std::endl;
+        LOG_APP_VERBOSE("Application started successfully"s);
         mainLoop();
         cleanup();
     }
@@ -45,11 +45,11 @@ int main()
         }
         catch (const std::exception& e)
         {
-            std::cerr << RED << "[Error]: " << e.what() << RESET << std::endl;
+            LOG_APP_ERROR("[Error]: " << e.what());
             return EXIT_FAILURE;
         }
     }
 
-    std::cout << GREEN << "Application completed succesfully" << RESET << std::endl;
+    LOG_APP_VERBOSE("Application completed succesfully"s);
     return EXIT_SUCCESS;
 }

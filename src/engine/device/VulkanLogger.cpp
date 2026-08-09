@@ -2,12 +2,12 @@
 
 // Vulkan debug callback
 
-static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+void logDebugMessage(
     VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-    VkDebugUtilsMessageTypeFlagsEXT type,
-    const VkDebugUtilsMessengerCallbackDataEXT* data,
-    void* /* userData */) {
-
+    uint64_t type,
+    const char* message
+)
+{
     std::string typeString;
     switch (type)
     {
@@ -22,6 +22,12 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
         break;
     case VK_DEBUG_UTILS_MESSAGE_TYPE_DEVICE_ADDRESS_BINDING_BIT_EXT:
         typeString = PEACH "[DeviceAddressBinding]" RESET;
+        break;
+    case DEBUG_MESSAGE_ENGINE:
+        typeString = PINK "[Engine]" RESET;
+        break;
+    case DEBUG_MESSAGE_APPLICATION:
+        typeString = SIENNA "[App]" RESET;
         break;
     default:
         typeString = "[Unknown]";
@@ -46,8 +52,17 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
         severityString = "[Unknown]";
     }
 
-    std::cout << severityString << typeString << ": " << data->pMessage << std::endl;
+    std::cout << severityString << typeString << ": " << message << std::endl;
+}
 
+static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+    VkDebugUtilsMessageSeverityFlagBitsEXT severity,
+    VkDebugUtilsMessageTypeFlagsEXT type,
+    const VkDebugUtilsMessengerCallbackDataEXT* data,
+    void* /* userData */) {
+
+    logDebugMessage(severity, type, data->pMessage);
+    
     return VK_FALSE;
 }
 
@@ -123,6 +138,6 @@ VulkanLogger::~VulkanLogger()
     if (m_debugMessenger)
     {
         destroyDebugUtilsMessengerEXT(m_instance->getInstance(), m_debugMessenger);
-        std::cout << "Vulkan logger destroyed" << std::endl;
+        LOG_ENGINE_INFO("Vulkan logger destroyed");
     }
 }

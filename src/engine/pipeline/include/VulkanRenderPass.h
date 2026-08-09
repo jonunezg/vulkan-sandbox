@@ -2,6 +2,7 @@
 
 #include "Utilities.h"
 #include "VulkanIncludes.h"
+#include "VulkanLogger.h"
 
 class VulkanRenderPass
 {

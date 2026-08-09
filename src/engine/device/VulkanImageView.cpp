@@ -1,4 +1,5 @@
 #include "VulkanImageView.h"
+#include "VulkanLogger.h"
 
 VulkanImageView::VulkanImageView(const VkDevice device, const VkSurfaceFormatKHR& format, const VkImage& image) :
 m_device { device }
@@ -35,7 +36,7 @@ m_device { device }
 
     VK_THROW_IF_FAILED(vkCreateImageView(m_device, &createInfo, nullptr, &m_imageView));
 
-    std::cout << "Vulkan image view created: " << m_imageView << std::endl;
+    LOG_ENGINE_INFO("Vulkan image view created: " << m_imageView);
 }
 
 VulkanImageView::~VulkanImageView()
@@ -44,6 +45,6 @@ VulkanImageView::~VulkanImageView()
     {
         vkDestroyImageView(m_device, m_imageView, nullptr);
 
-        std::cout << "Vulkan image view destroyed: " << m_imageView << std::endl;
+        LOG_ENGINE_INFO("Vulkan image view destroyed: " << m_imageView);
     }
 }

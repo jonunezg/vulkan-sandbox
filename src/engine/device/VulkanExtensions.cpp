@@ -1,6 +1,7 @@
 #include "Utilities.h"
 #include "VulkanExtensions.h"
 #include "VulkanIncludes.h"
+#include "VulkanLogger.h"
 
 std::vector<VkExtensionProperties> getAvailableExtensions()
 {
@@ -18,20 +19,20 @@ void dumpAvailableExtensions()
 {
     const auto extensions = getAvailableExtensions();
 
-    std::cout << "Available Vulkan extensions:" << std::endl;
+    LOG_ENGINE_VERBOSE("Available Vulkan extensions:"s);
     for(const auto& extension : extensions)
     {
-        std::cout << "\t" << extension.extensionName << ":" << extension.specVersion << std::endl;
+        LOG_ENGINE_VERBOSE("\t"s + extension.extensionName + ":" + std::to_string(extension.specVersion));
     }
 }
 
 void dumpRequiredExtensions(const std::vector<const char*>& extensions)
 {
-    std::cout << "Required " << extensions.size() << " Vulkan extensions:" << std::endl;
+    LOG_ENGINE_INFO("Required "s + std::to_string(extensions.size()) + " Vulkan extensions:");
 
     for (const auto& extension : extensions)
     {
-        std::cout << "\t" << extension << std::endl;
+        LOG_ENGINE_INFO("\t"s + extension);
     }
 }
 

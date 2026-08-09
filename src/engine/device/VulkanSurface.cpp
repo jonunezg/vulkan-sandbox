@@ -13,12 +13,12 @@ m_instance { std::move(instance) }
 
     VK_THROW_IF_FAILED(glfwCreateWindowSurface(m_instance->getInstance(), m_windowManager->getWindowHandle(), nullptr, &m_surface));
 
-    std::cout << "Vulkan surface created" << std::endl;
+    LOG_ENGINE_INFO("Vulkan surface created");
 }
 
 VulkanSurface::~VulkanSurface()
 {
     vkDestroySurfaceKHR(m_instance->getInstance(), m_surface, nullptr);
 
-    std::cout << "Vulkan surface destroyed" << std::endl;
+    LOG_ENGINE_INFO("Vulkan surface destroyed");
 }
