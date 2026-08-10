@@ -62,6 +62,7 @@ const PhysicalDevice& selectDevice(const std::vector<PhysicalDevice>& devices)
     {
         if (isDeviceSuitable(device))
         {
+            LOG_ENGINE_INFO("Selected physical device: " << device.properties.deviceName);
             return device;
         }
     }
@@ -189,5 +190,4 @@ m_surface { std::move(surface) }
 
 VulkanPhysicalDevice::~VulkanPhysicalDevice()
 {
-    LOG_ENGINE_INFO("Vulkan physical device destroyed");
 }

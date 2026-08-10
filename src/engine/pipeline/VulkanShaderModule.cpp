@@ -23,7 +23,7 @@ m_device { std::move(device) }
 
     VK_THROW_IF_FAILED(vkCreateShaderModule(m_device, &createInfo, nullptr, &m_shaderModule));
 
-    LOG_ENGINE_INFO("Loaded shader: " << definition.path << ", size: " << m_file.getData().size() << ", address: " << m_shaderModule);
+    LOG_ENGINE_INFO("Loaded shader: " << definition.path << ", size: " << m_file.getData().size() << ", " << m_shaderModule);
 }
 
 VulkanShaderModule::VulkanShaderModule(VulkanShaderModule&& other) :
@@ -41,7 +41,7 @@ VulkanShaderModule::~VulkanShaderModule()
     if (m_shaderModule)
     {
         vkDestroyShaderModule(m_device, m_shaderModule, nullptr);
-        LOG_ENGINE_INFO("Unloaded shader from address: " << m_shaderModule);
+        LOG_ENGINE_INFO("Unloaded shader: " << m_shaderModule);
     }
 }
 

@@ -57,12 +57,12 @@ m_device { device }
 
     VK_THROW_IF_FAILED(vkCreateRenderPass(m_device, &renderPassCreateInfo, nullptr, &m_renderPass));
 
-    LOG_ENGINE_INFO("Vulkan render pass created");
+    LOG_ENGINE_INFO("Vulkan render pass created: " << m_renderPass);
 }
 
 VulkanRenderPass::~VulkanRenderPass()
 {
     vkDestroyRenderPass(m_device, m_renderPass, nullptr);
 
-    LOG_ENGINE_INFO("Vulkan render pass destroyed");
+    LOG_ENGINE_INFO("Vulkan render pass destroyed: " << m_renderPass);
 }

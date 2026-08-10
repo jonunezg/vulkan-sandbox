@@ -135,12 +135,12 @@ m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) 
 
     createImageViews();
 
-    LOG_ENGINE_INFO("Vulkan swapchain created");
+    LOG_ENGINE_INFO("Vulkan swapchain created: " << m_swapchain);
 }
 
 VulkanSwapchain::~VulkanSwapchain()
 {
     vkDestroySwapchainKHR(m_logicalDevice->getDevice(), m_swapchain, nullptr);
 
-    LOG_ENGINE_INFO("Vulkan swapchain destroyed");
+    LOG_ENGINE_INFO("Vulkan swapchain destroyed: " << m_swapchain);
 }

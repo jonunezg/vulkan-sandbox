@@ -96,7 +96,7 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
 
     VK_THROW_IF_FAILED(vkCreatePipelineLayout(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &pipelineLayoutCreateInfo, nullptr, &m_vulkanPipelineLayout));
 
-    LOG_ENGINE_INFO("Vulkan pipeline layout created");
+    LOG_ENGINE_INFO("Vulkan pipeline layout created: " << m_vulkanPipelineLayout);
 
     std::vector<VkPipelineShaderStageCreateInfo> shadersCreateInfo {};
     shadersCreateInfo.reserve(shaders.size());
@@ -140,14 +140,14 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
         nullptr,
         &m_pipeline));
 
-    LOG_ENGINE_INFO("Vulkan graphics pipeline created");
+    LOG_ENGINE_INFO("Vulkan graphics pipeline created: " << m_pipeline);
 }
 
 VulkanPipelineManager::~VulkanPipelineManager()
 {
     vkDestroyPipeline(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_pipeline, nullptr);
-    LOG_ENGINE_INFO("Vulkan graphics pipeline destroyed");
+    LOG_ENGINE_INFO("Vulkan graphics pipeline destroyed: " << m_pipeline);
 
     vkDestroyPipelineLayout(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanPipelineLayout, nullptr);
-    LOG_ENGINE_INFO("Vulkan pipeline layout destroyed");
+    LOG_ENGINE_INFO("Vulkan pipeline layout destroyed: " << m_vulkanPipelineLayout);
 }
