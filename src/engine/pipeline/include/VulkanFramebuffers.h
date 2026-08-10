@@ -17,6 +17,7 @@ public:
     VulkanFrameBuffers(VulkanFrameBuffers&&) = delete;
     VulkanFrameBuffers(const VulkanFrameBuffers&&) = delete;
 
+    const std::vector<VkFramebuffer>& getFramebuffers(){ return m_framebuffers; }
 private:
     const VkDevice m_device;
     std::vector<VkFramebuffer> m_framebuffers;
