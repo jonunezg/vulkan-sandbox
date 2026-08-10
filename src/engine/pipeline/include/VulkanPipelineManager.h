@@ -1,5 +1,6 @@
 #pragma once
 
+#include "VulkanCommandPool.h"
 #include "VulkanDeviceManager.h"
 #include "VulkanDynamicState.h"
 #include "VulkanFramebuffers.h"
@@ -24,6 +25,8 @@ private:
     const VulkanDynamicState m_vulkanDynamicState{ m_vulkanDeviceManager };
     const VulkanRenderPass m_vulkanRenderPass{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanDeviceManager->getSwapchainFormat() };
     const VulkanFrameBuffers m_vulkanFramebuffers{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanDeviceManager->getSwapchain(), m_vulkanRenderPass.getRenderPass() };
+    
+    VulkanCommandPool m_vulkanCommandPool{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanDeviceManager->getPhysicalDevice() };
 
     VkPipelineLayout m_vulkanPipelineLayout;
     std::vector<VulkanShaderModule> m_shaders;

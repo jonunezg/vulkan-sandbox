@@ -29,6 +29,7 @@ public:
     const VkExtent2D& getSwapchainExtent() const { return m_swapchain.getSwapchainExtent(); }
     const VkFormat& getSwapchainFormat() const { return m_swapchain.getSwapchainformat(); }
     const VulkanSwapchain& getSwapchain() const { return m_swapchain; }
+    const PhysicalDevice& getPhysicalDevice() const { return m_physicalDevice->getSelectedDevice(); }
 
 private:
     // Vulkan objects following RAII pattern
