@@ -20,6 +20,10 @@ public:
 
     bool shouldClose() { return m_vulkanDeviceManager->shouldClose(); }
 
+    void drawFrame();
+
+    void waitDeviceIdle();
+
 private:
     const std::shared_ptr<VulkanDeviceManager> m_vulkanDeviceManager = std::make_shared<VulkanDeviceManager>();
     const VulkanDynamicState m_vulkanDynamicState{ m_vulkanDeviceManager };
@@ -32,4 +36,8 @@ private:
     std::vector<VulkanShaderModule> m_shaders;
 
     VkPipeline m_pipeline;
+
+    VkSemaphore m_imageAvailableSemaphore;
+    VkSemaphore m_renderFinishedSemaphore;
+    VkFence m_inFlightFence;
 };

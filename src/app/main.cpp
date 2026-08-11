@@ -24,7 +24,10 @@ private:
         while (!m_vulkanPipelineManager.shouldClose())
         {
             glfwPollEvents();
+            m_vulkanPipelineManager.drawFrame();
         }
+
+        m_vulkanPipelineManager.waitDeviceIdle();
     }
 
     void cleanup() {        

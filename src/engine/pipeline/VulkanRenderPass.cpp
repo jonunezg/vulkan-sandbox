@@ -8,7 +8,7 @@ m_device { device }
         throw std::runtime_error("Render pass created without logical device");
     }
 
-    VkAttachmentDescription attachment
+    const VkAttachmentDescription attachment
     {
         .flags = 0,
         .format = format,
@@ -22,13 +22,13 @@ m_device { device }
     };
 
     // This attachment reference is used by the frag shader: layout(location = 0) out vec4 outColor
-    VkAttachmentReference attachmentReference
+    const VkAttachmentReference attachmentReference
     {
         .attachment = 0, // Index of attachment array
         .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
     };
 
-    VkSubpassDescription subpassDescription
+    const VkSubpassDescription subpassDescription
     {
         .flags = 0,
         .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -42,7 +42,18 @@ m_device { device }
         .pPreserveAttachments = nullptr,
     };
 
-    VkRenderPassCreateInfo renderPassCreateInfo
+    const VkSubpassDependency subpassDependency
+    {
+        .srcSubpass = VK_SUBPASS_EXTERNAL, // Implicit first subpass
+        .dstSubpass = 0,
+        .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .srcAccessMask = 0,
+        .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+        .dependencyFlags = 0,
+    };
+
+    const VkRenderPassCreateInfo renderPassCreateInfo
     {
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
         .pNext = nullptr,
@@ -51,8 +62,8 @@ m_device { device }
         .pAttachments = &attachment,
         .subpassCount = 1,
         .pSubpasses = &subpassDescription,
-        .dependencyCount = 0,
-        .pDependencies = nullptr,
+        .dependencyCount = 1,
+        .pDependencies = &subpassDependency,
     };
 
     VK_THROW_IF_FAILED(vkCreateRenderPass(m_device, &renderPassCreateInfo, nullptr, &m_renderPass));

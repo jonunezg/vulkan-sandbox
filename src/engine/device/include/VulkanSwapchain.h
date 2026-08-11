@@ -24,6 +24,8 @@ public:
 
     const std::vector<VulkanImageView>& getImageViews() const { return m_imageViews; }
 
+    const VkSwapchainKHR& getSwapchain() const { return m_swapchain; }
+
 private:
 
     VkExtent2D selectSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);

@@ -141,6 +141,24 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
         &m_pipeline));
 
     LOG_ENGINE_INFO("Vulkan graphics pipeline created: " << m_pipeline);
+
+    VkSemaphoreCreateInfo semaphoreCreateInfo
+    {
+        .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+    };
+
+    VkFenceCreateInfo fenceCreateInfo
+    {
+        .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = VK_FENCE_CREATE_SIGNALED_BIT,
+    };
+
+    VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &semaphoreCreateInfo, nullptr, &m_imageAvailableSemaphore));
+    VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &semaphoreCreateInfo, nullptr, &m_renderFinishedSemaphore));
+    VK_THROW_IF_FAILED(vkCreateFence(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &fenceCreateInfo, nullptr, &m_inFlightFence));
 }
 
 VulkanPipelineManager::~VulkanPipelineManager()
@@ -150,4 +168,66 @@ VulkanPipelineManager::~VulkanPipelineManager()
 
     vkDestroyPipelineLayout(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanPipelineLayout, nullptr);
     LOG_ENGINE_INFO("Vulkan pipeline layout destroyed: " << m_vulkanPipelineLayout);
+
+    vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_imageAvailableSemaphore, nullptr);
+    vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_renderFinishedSemaphore, nullptr);
+    vkDestroyFence(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_inFlightFence, nullptr);
+}
+
+void VulkanPipelineManager::drawFrame()
+{
+    const VkDevice& device = m_vulkanDeviceManager->getLogicalDevice()->getDevice();
+    const VkSwapchainKHR& swapchain = m_vulkanDeviceManager->getSwapchain().getSwapchain();
+    const VkCommandBuffer& commandBuffer = m_vulkanCommandPool.getCommandBuffer();
+    const VkQueue& graphicsQueue = m_vulkanDeviceManager->getLogicalDevice()->getGraphicsQueue();
+    const VkQueue& presentQueue = m_vulkanDeviceManager->getLogicalDevice()->getPresentQueue();
+    vkWaitForFences(device, 1, &m_inFlightFence, VK_TRUE, UINT64_MAX);
+    vkResetFences(device, 1, &m_inFlightFence);
+
+    uint32_t imageIndex;
+    vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, m_imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+    vkResetCommandBuffer(commandBuffer, 0);
+
+    m_vulkanCommandPool.recordCommandBuffer(
+        imageIndex,
+        m_vulkanRenderPass.getRenderPass(),
+        m_vulkanFramebuffers.getFramebuffers(),
+        m_vulkanDeviceManager->getSwapchainExtent(),
+        m_pipeline);
+
+    const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
+    const VkSubmitInfo submitInfo
+    {
+        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        .pNext = nullptr,
+        .waitSemaphoreCount = 1,
+        .pWaitSemaphores = &m_imageAvailableSemaphore,
+        .pWaitDstStageMask = waitStages,
+        .commandBufferCount = 1,
+        .pCommandBuffers = &commandBuffer,
+        .signalSemaphoreCount = 1,
+        .pSignalSemaphores = &m_renderFinishedSemaphore,
+    };
+
+    VK_THROW_IF_FAILED(vkQueueSubmit(graphicsQueue, 1, &submitInfo, m_inFlightFence));
+
+    const VkPresentInfoKHR presentInfo
+    {
+        .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+        .pNext = nullptr,
+        .waitSemaphoreCount = 1,
+        .pWaitSemaphores = &m_renderFinishedSemaphore,
+        .swapchainCount = 1,
+        .pSwapchains = &swapchain,
+        .pImageIndices = &imageIndex,
+        .pResults = nullptr,
+    };
+
+    vkQueuePresentKHR(presentQueue, &presentInfo);
+}
+
+void VulkanPipelineManager::waitDeviceIdle()
+{
+    vkDeviceWaitIdle(m_vulkanDeviceManager->getLogicalDevice()->getDevice());
 }

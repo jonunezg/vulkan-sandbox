@@ -23,6 +23,8 @@ public:
         VkExtent2D swapchainExtent,
         VkPipeline pipeline);
 
+    const VkCommandBuffer& getCommandBuffer() const { return m_commandBuffer; }
+
 private:
     void createCommandBuffer();
 
