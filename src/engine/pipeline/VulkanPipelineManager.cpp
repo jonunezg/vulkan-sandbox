@@ -157,7 +157,14 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
     };
 
     VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &semaphoreCreateInfo, nullptr, &m_imageAvailableSemaphore));
-    VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &semaphoreCreateInfo, nullptr, &m_renderFinishedSemaphore));
+    
+    const auto imageCount = m_vulkanDeviceManager->getSwapchain().getImageViews().size();
+    m_renderFinishedSemaphore.resize(imageCount);
+    for (size_t i = 0 ; i < imageCount ; i++)
+    {
+        VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &semaphoreCreateInfo, nullptr, &m_renderFinishedSemaphore[i]));
+    }
+
     VK_THROW_IF_FAILED(vkCreateFence(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &fenceCreateInfo, nullptr, &m_inFlightFence));
 }
 
@@ -170,7 +177,12 @@ VulkanPipelineManager::~VulkanPipelineManager()
     LOG_ENGINE_INFO("Vulkan pipeline layout destroyed: " << m_vulkanPipelineLayout);
 
     vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_imageAvailableSemaphore, nullptr);
-    vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_renderFinishedSemaphore, nullptr);
+
+    for (size_t i = 0 ; i < m_renderFinishedSemaphore.size() ; i++)
+    {
+        vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_renderFinishedSemaphore[i], nullptr);
+    }
+
     vkDestroyFence(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_inFlightFence, nullptr);
 }
 
@@ -207,7 +219,7 @@ void VulkanPipelineManager::drawFrame()
         .commandBufferCount = 1,
         .pCommandBuffers = &commandBuffer,
         .signalSemaphoreCount = 1,
-        .pSignalSemaphores = &m_renderFinishedSemaphore,
+        .pSignalSemaphores = &m_renderFinishedSemaphore[imageIndex],
     };
 
     VK_THROW_IF_FAILED(vkQueueSubmit(graphicsQueue, 1, &submitInfo, m_inFlightFence));
@@ -217,7 +229,7 @@ void VulkanPipelineManager::drawFrame()
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
         .pNext = nullptr,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &m_renderFinishedSemaphore,
+        .pWaitSemaphores = &m_renderFinishedSemaphore[imageIndex],
         .swapchainCount = 1,
         .pSwapchains = &swapchain,
         .pImageIndices = &imageIndex,
