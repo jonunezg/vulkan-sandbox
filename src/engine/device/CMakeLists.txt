@@ -10,7 +10,6 @@ add_library(vulkan_device STATIC
     ./VulkanLogicalDevice.cpp
     ./VulkanPhysicalDevice.cpp
     ./VulkanSurface.cpp
-    ./VulkanSwapchain.cpp
 )
 
 target_include_directories(vulkan_device PUBLIC include)

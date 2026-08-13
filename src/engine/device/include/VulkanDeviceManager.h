@@ -9,7 +9,6 @@
 #include "VulkanLogicalDevice.h"
 #include "VulkanPhysicalDevice.h"
 #include "VulkanSurface.h"
-#include "VulkanSwapchain.h"
 #include "WindowManager.h"
 
 class VulkanDeviceManager
@@ -26,10 +25,11 @@ public:
     bool shouldClose() { return m_windowManager->windowShouldClose(); }
 
     const std::shared_ptr<VulkanLogicalDevice> getLogicalDevice() const { return m_logicalDevice; }
-    const VkExtent2D& getSwapchainExtent() const { return m_swapchain.getSwapchainExtent(); }
-    const VkFormat& getSwapchainFormat() const { return m_swapchain.getSwapchainformat(); }
-    const VulkanSwapchain& getSwapchain() const { return m_swapchain; }
     const PhysicalDevice& getPhysicalDevice() const { return m_physicalDevice->getSelectedDevice(); }
+
+    const std::shared_ptr<VulkanPhysicalDevice> getSharedPhysicalDevice() { return m_physicalDevice; }
+    const std::shared_ptr<VulkanSurface> getSharedSurface() { return m_surface; }
+    const std::shared_ptr<WindowManager> getSharedWindowManager() { return m_windowManager; }
 
 private:
     // Vulkan objects following RAII pattern
@@ -39,5 +39,4 @@ private:
     const std::shared_ptr<VulkanSurface> m_surface = std::make_shared<VulkanSurface>(m_windowManager, m_instance);
     const std::shared_ptr<VulkanPhysicalDevice> m_physicalDevice = std::make_shared<VulkanPhysicalDevice>(m_instance, m_surface);
     const std::shared_ptr<VulkanLogicalDevice> m_logicalDevice = std::make_shared<VulkanLogicalDevice>(m_physicalDevice);
-    const VulkanSwapchain m_swapchain = { m_physicalDevice, m_logicalDevice, m_surface, m_windowManager };
 };

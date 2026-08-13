@@ -1,14 +1,9 @@
 #include "VulkanDynamicState.h"
 
-VulkanDynamicState::VulkanDynamicState(const std::shared_ptr<VulkanDeviceManager> deviceManager) :
-m_vulkanDeviceManager { std::move(deviceManager) }
+VulkanDynamicState::VulkanDynamicState(const VulkanSwapchain& swapchain) :
+m_swapchain { swapchain }
 {
-    if (!m_vulkanDeviceManager)
-    {
-        throw std::runtime_error("Dynamic state created without device manager");
-    }
-
-    const auto& extent = m_vulkanDeviceManager->getSwapchainExtent();
+    const auto& extent = m_swapchain.getSwapchainExtent();
 
     m_viewport =
     {

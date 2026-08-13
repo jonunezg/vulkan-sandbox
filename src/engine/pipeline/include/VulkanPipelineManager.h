@@ -26,9 +26,10 @@ public:
 
 private:
     const std::shared_ptr<VulkanDeviceManager> m_vulkanDeviceManager = std::make_shared<VulkanDeviceManager>();
-    const VulkanDynamicState m_vulkanDynamicState{ m_vulkanDeviceManager };
-    const VulkanRenderPass m_vulkanRenderPass{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanDeviceManager->getSwapchainFormat() };
-    const VulkanFrameBuffers m_vulkanFramebuffers{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanDeviceManager->getSwapchain(), m_vulkanRenderPass.getRenderPass() };
+    const VulkanSwapchain m_swapchain = { m_vulkanDeviceManager->getSharedPhysicalDevice(), m_vulkanDeviceManager->getLogicalDevice(), m_vulkanDeviceManager->getSharedSurface(), m_vulkanDeviceManager->getSharedWindowManager() };
+    const VulkanDynamicState m_vulkanDynamicState{ m_swapchain };
+    const VulkanRenderPass m_vulkanRenderPass{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_swapchain.getSwapchainFormat() };
+    const VulkanFrameBuffers m_vulkanFramebuffers{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_swapchain, m_vulkanRenderPass.getRenderPass() };
     
     VulkanCommandPool m_vulkanCommandPool{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanDeviceManager->getPhysicalDevice() };
 

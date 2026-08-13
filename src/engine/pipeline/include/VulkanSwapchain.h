@@ -20,7 +20,7 @@ public:
 
     const VkExtent2D& getSwapchainExtent() const { return m_extent; }
 
-    const VkFormat& getSwapchainformat() const { return m_format.format; }
+    const VkFormat& getSwapchainFormat() const { return m_format.format; }
 
     const std::vector<VulkanImageView>& getImageViews() const { return m_imageViews; }
 

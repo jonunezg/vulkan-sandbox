@@ -7,6 +7,7 @@ add_library(vulkan_pipeline STATIC
     ./VulkanPipelineManager.cpp
     ./VulkanRenderPass.cpp
     ./VulkanShaderModule.cpp
+    ./VulkanSwapchain.cpp
 )
 
 target_link_libraries(vulkan_pipeline vulkan_device)

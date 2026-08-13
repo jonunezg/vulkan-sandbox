@@ -165,7 +165,7 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
         VK_THROW_IF_FAILED(vkCreateFence(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &fenceCreateInfo, nullptr, &m_inFlightFences[i]));
     }
 
-    const auto imageCount = m_vulkanDeviceManager->getSwapchain().getImageViews().size();
+    const auto imageCount = m_swapchain.getImageViews().size();
     m_renderFinishedSemaphores.resize(imageCount);
     for (size_t i = 0 ; i < imageCount ; i++)
     {
@@ -199,7 +199,7 @@ VulkanPipelineManager::~VulkanPipelineManager()
 void VulkanPipelineManager::drawFrame()
 {
     const VkDevice& device = m_vulkanDeviceManager->getLogicalDevice()->getDevice();
-    const VkSwapchainKHR& swapchain = m_vulkanDeviceManager->getSwapchain().getSwapchain();
+    const VkSwapchainKHR& swapchain = m_swapchain.getSwapchain();
     const VkCommandBuffer& commandBuffer = m_vulkanCommandPool.getCommandBuffer(m_frameIndex);
     const VkQueue& graphicsQueue = m_vulkanDeviceManager->getLogicalDevice()->getGraphicsQueue();
     const VkQueue& presentQueue = m_vulkanDeviceManager->getLogicalDevice()->getPresentQueue();
@@ -215,7 +215,7 @@ void VulkanPipelineManager::drawFrame()
         imageIndex,
         m_vulkanRenderPass.getRenderPass(),
         m_vulkanFramebuffers.getFramebuffers(),
-        m_vulkanDeviceManager->getSwapchainExtent(),
+        m_swapchain.getSwapchainExtent(),
         m_pipeline);
 
     const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
