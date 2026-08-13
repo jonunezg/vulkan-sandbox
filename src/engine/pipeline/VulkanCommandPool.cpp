@@ -36,15 +36,21 @@ void VulkanCommandPool::createCommandBuffer()
         .pNext = nullptr,
         .commandPool = m_commandPool,
         .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-        .commandBufferCount = 1,
+        .commandBufferCount = 2,
     };
 
-    VK_THROW_IF_FAILED(vkAllocateCommandBuffers(m_device, &bufferAllocateInfo, &m_commandBuffer));
+    m_commandBuffers.resize(MAX_CONCURRENT_IMAGES);
 
-    LOG_ENGINE_INFO("Vulkan command buffer created: " << m_commandBuffer);
+    VK_THROW_IF_FAILED(vkAllocateCommandBuffers(m_device, &bufferAllocateInfo, m_commandBuffers.data()));
+
+    for(const auto& commandBuffer : m_commandBuffers)
+    {
+        LOG_ENGINE_INFO("Vulkan command buffer created: " << commandBuffer);
+    }
 }
 
 void VulkanCommandPool::recordCommandBuffer(
+    size_t frameIndex,
     uint32_t imageIndex,
     VkRenderPass renderPass,
     const std::vector<VkFramebuffer>& framebuffers,
@@ -59,7 +65,7 @@ void VulkanCommandPool::recordCommandBuffer(
         .pInheritanceInfo = nullptr,
     };
 
-    VK_THROW_IF_FAILED(vkBeginCommandBuffer(m_commandBuffer, &beginInfo));
+    VK_THROW_IF_FAILED(vkBeginCommandBuffer(m_commandBuffers[frameIndex], &beginInfo));
 
     VkClearValue clearColor = {{{ 0.0f, 0.0f, 0.0f, 1.0f }}};
     VkRenderPassBeginInfo renderPassInfo
@@ -73,9 +79,9 @@ void VulkanCommandPool::recordCommandBuffer(
         .pClearValues = &clearColor,
     };
 
-    vkCmdBeginRenderPass(m_commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(m_commandBuffers[frameIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-    vkCmdBindPipeline(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+    vkCmdBindPipeline(m_commandBuffers[frameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
     const VkViewport viewport
     {
@@ -87,7 +93,7 @@ void VulkanCommandPool::recordCommandBuffer(
         .maxDepth = 1.0f,
     };
 
-    vkCmdSetViewport(m_commandBuffer, 0, 1, &viewport);
+    vkCmdSetViewport(m_commandBuffers[frameIndex], 0, 1, &viewport);
 
     const VkRect2D scissor
     {
@@ -95,12 +101,12 @@ void VulkanCommandPool::recordCommandBuffer(
         .extent = swapchainExtent,
     };
 
-    vkCmdSetScissor(m_commandBuffer, 0, 1, &scissor);
+    vkCmdSetScissor(m_commandBuffers[frameIndex], 0, 1, &scissor);
 
-    vkCmdDraw(m_commandBuffer, 3, 1, 0, 0);
+    vkCmdDraw(m_commandBuffers[frameIndex], 3, 1, 0, 0);
     //Future: read about instanced rendering
 
-    vkCmdEndRenderPass(m_commandBuffer);
+    vkCmdEndRenderPass(m_commandBuffers[frameIndex]);
 
-    VK_THROW_IF_FAILED(vkEndCommandBuffer(m_commandBuffer));
+    VK_THROW_IF_FAILED(vkEndCommandBuffer(m_commandBuffers[frameIndex]));
 }

@@ -38,3 +38,5 @@ do \
 #else
        #define VK_ENABLE_DEBUG (false)
 #endif
+
+#define MAX_CONCURRENT_IMAGES 2

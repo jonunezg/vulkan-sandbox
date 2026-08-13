@@ -156,16 +156,22 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
         .flags = VK_FENCE_CREATE_SIGNALED_BIT,
     };
 
-    VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &semaphoreCreateInfo, nullptr, &m_imageAvailableSemaphore));
     
-    const auto imageCount = m_vulkanDeviceManager->getSwapchain().getImageViews().size();
-    m_renderFinishedSemaphore.resize(imageCount);
-    for (size_t i = 0 ; i < imageCount ; i++)
+    m_imageAvailableSemaphores.resize(MAX_CONCURRENT_IMAGES);
+    m_inFlightFences.resize(MAX_CONCURRENT_IMAGES);
+    for (size_t i = 0 ; i < MAX_CONCURRENT_IMAGES ; i++)
     {
-        VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &semaphoreCreateInfo, nullptr, &m_renderFinishedSemaphore[i]));
+        VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &semaphoreCreateInfo, nullptr, &m_imageAvailableSemaphores[i]));
+        VK_THROW_IF_FAILED(vkCreateFence(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &fenceCreateInfo, nullptr, &m_inFlightFences[i]));
     }
 
-    VK_THROW_IF_FAILED(vkCreateFence(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &fenceCreateInfo, nullptr, &m_inFlightFence));
+    const auto imageCount = m_vulkanDeviceManager->getSwapchain().getImageViews().size();
+    m_renderFinishedSemaphores.resize(imageCount);
+    for (size_t i = 0 ; i < imageCount ; i++)
+    {
+        VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &semaphoreCreateInfo, nullptr, &m_renderFinishedSemaphores[i]));
+    }
+
 }
 
 VulkanPipelineManager::~VulkanPipelineManager()
@@ -176,31 +182,36 @@ VulkanPipelineManager::~VulkanPipelineManager()
     vkDestroyPipelineLayout(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanPipelineLayout, nullptr);
     LOG_ENGINE_INFO("Vulkan pipeline layout destroyed: " << m_vulkanPipelineLayout);
 
-    vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_imageAvailableSemaphore, nullptr);
-
-    for (size_t i = 0 ; i < m_renderFinishedSemaphore.size() ; i++)
+    
+    for (size_t i = 0 ; i < MAX_CONCURRENT_IMAGES ; i++)
     {
-        vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_renderFinishedSemaphore[i], nullptr);
+        vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_imageAvailableSemaphores[i], nullptr);
+        vkDestroyFence(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_inFlightFences[i], nullptr);
     }
 
-    vkDestroyFence(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_inFlightFence, nullptr);
+    for (size_t i = 0 ; i < m_renderFinishedSemaphores.size() ; i++)
+    {
+        vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_renderFinishedSemaphores[i], nullptr);
+    }
+
 }
 
 void VulkanPipelineManager::drawFrame()
 {
     const VkDevice& device = m_vulkanDeviceManager->getLogicalDevice()->getDevice();
     const VkSwapchainKHR& swapchain = m_vulkanDeviceManager->getSwapchain().getSwapchain();
-    const VkCommandBuffer& commandBuffer = m_vulkanCommandPool.getCommandBuffer();
+    const VkCommandBuffer& commandBuffer = m_vulkanCommandPool.getCommandBuffer(m_frameIndex);
     const VkQueue& graphicsQueue = m_vulkanDeviceManager->getLogicalDevice()->getGraphicsQueue();
     const VkQueue& presentQueue = m_vulkanDeviceManager->getLogicalDevice()->getPresentQueue();
-    vkWaitForFences(device, 1, &m_inFlightFence, VK_TRUE, UINT64_MAX);
-    vkResetFences(device, 1, &m_inFlightFence);
+    vkWaitForFences(device, 1, &m_inFlightFences[m_frameIndex], VK_TRUE, UINT64_MAX);
+    vkResetFences(device, 1, &m_inFlightFences[m_frameIndex]);
 
     uint32_t imageIndex;
-    vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, m_imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+    vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, m_imageAvailableSemaphores[m_frameIndex], VK_NULL_HANDLE, &imageIndex);
     vkResetCommandBuffer(commandBuffer, 0);
 
     m_vulkanCommandPool.recordCommandBuffer(
+        m_frameIndex,
         imageIndex,
         m_vulkanRenderPass.getRenderPass(),
         m_vulkanFramebuffers.getFramebuffers(),
@@ -214,22 +225,22 @@ void VulkanPipelineManager::drawFrame()
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .pNext = nullptr,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &m_imageAvailableSemaphore,
+        .pWaitSemaphores = &m_imageAvailableSemaphores[m_frameIndex],
         .pWaitDstStageMask = waitStages,
         .commandBufferCount = 1,
         .pCommandBuffers = &commandBuffer,
         .signalSemaphoreCount = 1,
-        .pSignalSemaphores = &m_renderFinishedSemaphore[imageIndex],
+        .pSignalSemaphores = &m_renderFinishedSemaphores[imageIndex],
     };
 
-    VK_THROW_IF_FAILED(vkQueueSubmit(graphicsQueue, 1, &submitInfo, m_inFlightFence));
+    VK_THROW_IF_FAILED(vkQueueSubmit(graphicsQueue, 1, &submitInfo, m_inFlightFences[m_frameIndex]));
 
     const VkPresentInfoKHR presentInfo
     {
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
         .pNext = nullptr,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &m_renderFinishedSemaphore[imageIndex],
+        .pWaitSemaphores = &m_renderFinishedSemaphores[imageIndex],
         .swapchainCount = 1,
         .pSwapchains = &swapchain,
         .pImageIndices = &imageIndex,
@@ -237,6 +248,8 @@ void VulkanPipelineManager::drawFrame()
     };
 
     vkQueuePresentKHR(presentQueue, &presentInfo);
+
+    m_frameIndex = (m_frameIndex + 1) % MAX_CONCURRENT_IMAGES;
 }
 
 void VulkanPipelineManager::waitDeviceIdle()

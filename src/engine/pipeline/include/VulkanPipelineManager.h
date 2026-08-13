@@ -37,7 +37,9 @@ private:
 
     VkPipeline m_pipeline;
 
-    VkSemaphore m_imageAvailableSemaphore;
-    std::vector<VkSemaphore> m_renderFinishedSemaphore;
-    VkFence m_inFlightFence;
+    std::vector<VkSemaphore> m_imageAvailableSemaphores;
+    std::vector<VkSemaphore> m_renderFinishedSemaphores;
+    std::vector<VkFence> m_inFlightFences;
+
+    size_t m_frameIndex = 0;
 };

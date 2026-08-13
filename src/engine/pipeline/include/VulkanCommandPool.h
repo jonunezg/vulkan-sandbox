@@ -17,18 +17,19 @@ public:
     VulkanCommandPool(const VulkanCommandPool&&) = delete;
 
     void recordCommandBuffer(
+        size_t frameIndex,
         uint32_t imageIndex,
         VkRenderPass renderPass,
         const std::vector<VkFramebuffer>& framebuffers,
         VkExtent2D swapchainExtent,
         VkPipeline pipeline);
 
-    const VkCommandBuffer& getCommandBuffer() const { return m_commandBuffer; }
+    const VkCommandBuffer& getCommandBuffer(size_t index) const { return m_commandBuffers[index]; }
 
 private:
     void createCommandBuffer();
 
     const VkDevice m_device;
     VkCommandPool m_commandPool;
-    VkCommandBuffer m_commandBuffer;
+    std::vector<VkCommandBuffer> m_commandBuffers;
 };
