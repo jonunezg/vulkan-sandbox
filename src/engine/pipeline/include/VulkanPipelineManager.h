@@ -17,19 +17,20 @@ public:
     VulkanPipelineManager(const VulkanPipelineManager&) = delete;
     VulkanPipelineManager(VulkanPipelineManager&&) = delete;
     VulkanPipelineManager(const VulkanPipelineManager&&) = delete;
-
-    bool shouldClose() { return m_vulkanDeviceManager->shouldClose(); }
-
-    void drawFrame();
-
-    void waitDeviceIdle();
+    
+    bool drawFrame();
 
 private:
+    void recreateSwapchainObjects();
+    bool shouldClose() { return m_vulkanDeviceManager->shouldClose(); }
+    void waitDeviceIdle();
+
     const std::shared_ptr<VulkanDeviceManager> m_vulkanDeviceManager = std::make_shared<VulkanDeviceManager>();
-    const VulkanSwapchain m_swapchain = { m_vulkanDeviceManager->getSharedPhysicalDevice(), m_vulkanDeviceManager->getLogicalDevice(), m_vulkanDeviceManager->getSharedSurface(), m_vulkanDeviceManager->getSharedWindowManager() };
-    const VulkanDynamicState m_vulkanDynamicState{ m_swapchain };
-    const VulkanRenderPass m_vulkanRenderPass{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_swapchain.getSwapchainFormat() };
-    const VulkanFrameBuffers m_vulkanFramebuffers{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_swapchain, m_vulkanRenderPass.getRenderPass() };
+    const VulkanDynamicState m_vulkanDynamicState{};
+
+    std::unique_ptr<VulkanSwapchain> m_swapchain = std::make_unique<VulkanSwapchain>(m_vulkanDeviceManager->getSharedPhysicalDevice(), m_vulkanDeviceManager->getLogicalDevice(), m_vulkanDeviceManager->getSharedSurface(), m_vulkanDeviceManager->getSharedWindowManager());
+    std::unique_ptr<VulkanRenderPass> m_vulkanRenderPass = std::make_unique<VulkanRenderPass>(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_swapchain->getSwapchainFormat());
+    std::unique_ptr<VulkanFrameBuffers> m_vulkanFramebuffers = std::make_unique<VulkanFrameBuffers>(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), *m_swapchain, m_vulkanRenderPass->getRenderPass());
     
     VulkanCommandPool m_vulkanCommandPool{ m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanDeviceManager->getPhysicalDevice() };
 

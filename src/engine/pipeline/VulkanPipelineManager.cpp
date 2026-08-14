@@ -126,7 +126,7 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
         .pColorBlendState = &colorBlendStateCreateInfo,
         .pDynamicState = &dynamicStateCreateInfo,
         .layout = m_vulkanPipelineLayout,
-        .renderPass = m_vulkanRenderPass.getRenderPass(),
+        .renderPass = m_vulkanRenderPass->getRenderPass(),
         .subpass = 0,
         .basePipelineHandle = VK_NULL_HANDLE,
         .basePipelineIndex = -1,
@@ -165,7 +165,7 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
         VK_THROW_IF_FAILED(vkCreateFence(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &fenceCreateInfo, nullptr, &m_inFlightFences[i]));
     }
 
-    const auto imageCount = m_swapchain.getImageViews().size();
+    const auto imageCount = m_swapchain->getImageViews().size();
     m_renderFinishedSemaphores.resize(imageCount);
     for (size_t i = 0 ; i < imageCount ; i++)
     {
@@ -196,26 +196,41 @@ VulkanPipelineManager::~VulkanPipelineManager()
 
 }
 
-void VulkanPipelineManager::drawFrame()
+bool VulkanPipelineManager::drawFrame()
 {
     const VkDevice& device = m_vulkanDeviceManager->getLogicalDevice()->getDevice();
-    const VkSwapchainKHR& swapchain = m_swapchain.getSwapchain();
+    const VkSwapchainKHR& swapchain = m_swapchain->getSwapchain();
     const VkCommandBuffer& commandBuffer = m_vulkanCommandPool.getCommandBuffer(m_frameIndex);
     const VkQueue& graphicsQueue = m_vulkanDeviceManager->getLogicalDevice()->getGraphicsQueue();
     const VkQueue& presentQueue = m_vulkanDeviceManager->getLogicalDevice()->getPresentQueue();
+
+    if (shouldClose())
+    {
+        waitDeviceIdle();
+        return false;
+    }
+
     vkWaitForFences(device, 1, &m_inFlightFences[m_frameIndex], VK_TRUE, UINT64_MAX);
+    
+    uint32_t imageIndex;
+    VkResult result = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, m_imageAvailableSemaphores[m_frameIndex], VK_NULL_HANDLE, &imageIndex);
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+    {
+        recreateSwapchainObjects();
+        return true;
+    }
+    VK_THROW_IF_FAILED(result);
+
     vkResetFences(device, 1, &m_inFlightFences[m_frameIndex]);
 
-    uint32_t imageIndex;
-    vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, m_imageAvailableSemaphores[m_frameIndex], VK_NULL_HANDLE, &imageIndex);
     vkResetCommandBuffer(commandBuffer, 0);
 
     m_vulkanCommandPool.recordCommandBuffer(
         m_frameIndex,
         imageIndex,
-        m_vulkanRenderPass.getRenderPass(),
-        m_vulkanFramebuffers.getFramebuffers(),
-        m_swapchain.getSwapchainExtent(),
+        m_vulkanRenderPass->getRenderPass(),
+        m_vulkanFramebuffers->getFramebuffers(),
+        m_swapchain->getSwapchainExtent(),
         m_pipeline);
 
     const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -250,9 +265,26 @@ void VulkanPipelineManager::drawFrame()
     vkQueuePresentKHR(presentQueue, &presentInfo);
 
     m_frameIndex = (m_frameIndex + 1) % MAX_CONCURRENT_IMAGES;
+
+    return true;
 }
 
 void VulkanPipelineManager::waitDeviceIdle()
 {
     vkDeviceWaitIdle(m_vulkanDeviceManager->getLogicalDevice()->getDevice());
+}
+
+void VulkanPipelineManager::recreateSwapchainObjects()
+{
+    LOG_ENGINE_INFO("Swapchain objects recreation started");
+
+    waitDeviceIdle();
+    m_swapchain.reset();
+    m_vulkanRenderPass.reset();
+    m_vulkanFramebuffers.reset();
+    m_swapchain = std::make_unique<VulkanSwapchain>(m_vulkanDeviceManager->getSharedPhysicalDevice(), m_vulkanDeviceManager->getLogicalDevice(), m_vulkanDeviceManager->getSharedSurface(), m_vulkanDeviceManager->getSharedWindowManager());
+    m_vulkanRenderPass = std::make_unique<VulkanRenderPass>(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_swapchain->getSwapchainFormat());
+    m_vulkanFramebuffers = std::make_unique<VulkanFrameBuffers>(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), *m_swapchain, m_vulkanRenderPass->getRenderPass());
+
+    LOG_ENGINE_INFO("Swapchain objects recreation complete");
 }

@@ -25,10 +25,10 @@ const uint32_t WINDOW_HEIGHT = 800;
 #define VK_THROW_IF_FAILED(x) \
 do \
 { \
-    VkResult result = (x); \
-    if (result != VK_SUCCESS) \
+    VkResult r = (x); \
+    if (r != VK_SUCCESS) \
     { \
-        std::string msg = "!!!Vulkan error at: " __FILE__ ":" + std::to_string(__LINE__) + ", code: " + std::to_string(result); \
+        std::string msg = "!!!Vulkan error at: " __FILE__ ":" + std::to_string(__LINE__) + ", code: " + std::to_string(r); \
         throw std::runtime_error(msg.c_str()); \
     } \
 } while(0);

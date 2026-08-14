@@ -1,26 +1,7 @@
 #include "VulkanDynamicState.h"
 
-VulkanDynamicState::VulkanDynamicState(const VulkanSwapchain& swapchain) :
-m_swapchain { swapchain }
+VulkanDynamicState::VulkanDynamicState()
 {
-    const auto& extent = m_swapchain.getSwapchainExtent();
-
-    m_viewport =
-    {
-        .x = 0.0f,
-        .y = 0.0f,
-        .width = static_cast<float>(extent.width),
-        .height = static_cast<float>(extent.height),
-        .minDepth = 0.0f,
-        .maxDepth = 1.0f,
-    };
-
-    m_scissor =
-    {
-        .offset = { 0, 0 },
-        .extent = extent,
-    };
-
     m_dynamicStates = 
     {
         VK_DYNAMIC_STATE_VIEWPORT,

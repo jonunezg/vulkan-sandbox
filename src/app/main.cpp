@@ -21,13 +21,10 @@ private:
 
     void mainLoop()
     {    
-        while (!m_vulkanPipelineManager.shouldClose())
+        while (m_vulkanPipelineManager.drawFrame())
         {
             glfwPollEvents();
-            m_vulkanPipelineManager.drawFrame();
         }
-
-        m_vulkanPipelineManager.waitDeviceIdle();
     }
 
     void cleanup() {        

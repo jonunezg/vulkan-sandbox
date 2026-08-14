@@ -139,32 +139,37 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
 
         if (deviceSupportsRequiredExtensions(*i))
         {
-            vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface->getSurface(), &i->capabilities);
-    
-            uint32_t formatCount;
-            vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface->getSurface(), &formatCount, nullptr);
-            
-            if (formatCount)
-            {
-                i->formats.resize(formatCount);
-                vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface->getSurface(), &formatCount, i->formats.data());
-    
-            }
-    
-            uint32_t presentModeCount;
-            vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface->getSurface(), &presentModeCount, nullptr);
-    
-            if (presentModeCount)
-            {
-                i->presentModes.resize(presentModeCount);
-                vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface->getSurface(), &presentModeCount, i->presentModes.data());
-            }
+            UpdateSwapchainSupportSettings(m_surface->getSurface(), *i);
         }
 
         i++;
     }
 
     return devicesInfo;
+}
+
+void VulkanPhysicalDevice::UpdateSwapchainSupportSettings(VkSurfaceKHR surface, PhysicalDevice& storage)
+{
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(storage.device, surface, &storage.capabilities);
+
+    uint32_t formatCount;
+    vkGetPhysicalDeviceSurfaceFormatsKHR(storage.device, surface, &formatCount, nullptr);
+    
+    if (formatCount)
+    {
+        storage.formats.resize(formatCount);
+        vkGetPhysicalDeviceSurfaceFormatsKHR(storage.device, surface, &formatCount, storage.formats.data());
+
+    }
+
+    uint32_t presentModeCount;
+    vkGetPhysicalDeviceSurfacePresentModesKHR(storage.device, surface, &presentModeCount, nullptr);
+
+    if (presentModeCount)
+    {
+        storage.presentModes.resize(presentModeCount);
+        vkGetPhysicalDeviceSurfacePresentModesKHR(storage.device, surface, &presentModeCount, storage.presentModes.data());
+    }
 }
 
 VulkanPhysicalDevice::VulkanPhysicalDevice(

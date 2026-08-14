@@ -10,7 +10,7 @@ public:
         if (m_glfwManager.glfwOk())
         {
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);   // Don't start OpenGL
-            glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);     // No resizable window
+            // glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);     // No resizable window
 
             LOG_ENGINE_INFO("Creating window");
             m_window = glfwCreateWindow(WINDOW_HEIGHT, WINDOW_WIDTH, "Vulkan app", nullptr, nullptr);
