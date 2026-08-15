@@ -1,6 +1,10 @@
 #pragma once
 
+#include <atomic>
+
 #include "GlfwManager.h"
+
+static void resizeCallback(GLFWwindow* window, int, int);
 
 class WindowManager
 {
@@ -20,6 +24,9 @@ public:
             {
                 throw std::runtime_error("Unable to create window");
             }
+
+            glfwSetWindowUserPointer(m_window, this);
+            glfwSetFramebufferSizeCallback(m_window, resizeCallback);
         }
     }
 
@@ -55,8 +62,37 @@ public:
         return { width, height };
     }
 
+    bool windowResized() { bool resized = true; return m_windowResized.compare_exchange_strong(resized, false); }
+    void setWindowResized() { m_windowResized.store(true); }
+    void pauseWhileMinimized()
+    {
+        int width = 0, height = 0;
+        glfwGetFramebufferSize(m_window, &width, &height);
+        bool paused = width == 0 || height == 0;
+        if (paused)
+        {
+            LOG_ENGINE_WARNING("Window minimized, pausing");
+        }
+        while (width == 0 || height == 0)
+        {
+            glfwWaitEvents();
+            glfwGetFramebufferSize(m_window, &width, &height);
+        }
+        if (paused)
+        {
+            LOG_ENGINE_WARNING("Window no longer minimized, continuing");
+        }
+    }
+
 private:
     GlfwManager m_glfwManager;
     GLFWwindow* m_window = nullptr;
 
+    std::atomic<bool> m_windowResized = false;
 };
+
+static void resizeCallback(GLFWwindow* window, int, int)
+{
+    auto manager = reinterpret_cast<WindowManager*>(glfwGetWindowUserPointer(window));
+    manager->setWindowResized();
+}
