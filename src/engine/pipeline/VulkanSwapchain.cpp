@@ -53,25 +53,20 @@ void VulkanSwapchain::createImageViews()
     m_imageViews.reserve(m_images.size());
     for (const auto& image : m_images)
     {
-        m_imageViews.emplace_back(m_logicalDevice->getDevice(), m_format, image);
+        m_imageViews.emplace_back(m_device, m_format, image);
     }
 }
 
 VulkanSwapchain::VulkanSwapchain(
     const PhysicalDevice& physicalDevice,
-    const std::shared_ptr<VulkanLogicalDevice> logicalDevice,
+    const VkDevice& logicalDevice,
     const VkSurfaceKHR& surface,
     const WindowManager& windowManager) :
-m_logicalDevice { std::move(logicalDevice) },
+m_device { logicalDevice },
 m_windowManager { std::move(windowManager) },
 m_format { selectSwapchainFormat(physicalDevice.formats) },
 m_extent { selectSwapExtent(physicalDevice.capabilities) }
 {
-    if (!m_logicalDevice)
-    {
-        throw std::runtime_error("Swapchain created without logical device");
-    }
-
     const auto mode = selectPresentMode(physicalDevice.presentModes);
     const uint32_t imageCount = physicalDevice.capabilities.maxImageCount > 0
         ? std::clamp(physicalDevice.capabilities.minImageCount + 1, physicalDevice.capabilities.minImageCount, physicalDevice.capabilities.maxImageCount)
@@ -101,10 +96,10 @@ m_extent { selectSwapExtent(physicalDevice.capabilities) }
         .oldSwapchain = VK_NULL_HANDLE,
     };
 
-    VK_THROW_IF_FAILED(vkCreateSwapchainKHR(m_logicalDevice->getDevice(), &createInfo, nullptr, &m_swapchain))
+    VK_THROW_IF_FAILED(vkCreateSwapchainKHR(m_device, &createInfo, nullptr, &m_swapchain))
 
     uint32_t swapchainImageCount;
-    VK_THROW_IF_FAILED(vkGetSwapchainImagesKHR(m_logicalDevice->getDevice(), m_swapchain, &swapchainImageCount, nullptr));
+    VK_THROW_IF_FAILED(vkGetSwapchainImagesKHR(m_device, m_swapchain, &swapchainImageCount, nullptr));
     
     if (!swapchainImageCount)
     {
@@ -112,7 +107,7 @@ m_extent { selectSwapExtent(physicalDevice.capabilities) }
     }
     
     m_images.resize(swapchainImageCount);
-    VK_THROW_IF_FAILED(vkGetSwapchainImagesKHR(m_logicalDevice->getDevice(), m_swapchain, &swapchainImageCount, m_images.data()));
+    VK_THROW_IF_FAILED(vkGetSwapchainImagesKHR(m_device, m_swapchain, &swapchainImageCount, m_images.data()));
 
     createImageViews();
 
@@ -121,7 +116,7 @@ m_extent { selectSwapExtent(physicalDevice.capabilities) }
 
 VulkanSwapchain::~VulkanSwapchain()
 {
-    vkDestroySwapchainKHR(m_logicalDevice->getDevice(), m_swapchain, nullptr);
+    vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
 
     LOG_ENGINE_INFO("Vulkan swapchain destroyed: " << m_swapchain);
 }

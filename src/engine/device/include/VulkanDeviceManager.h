@@ -23,16 +23,16 @@ public:
     VulkanDeviceManager(const VulkanDeviceManager&&) = delete;
 
     bool shouldClose() const { return m_windowManager.windowShouldClose(); }
-    const std::shared_ptr<VulkanLogicalDevice> getLogicalDevice() const { return m_logicalDevice; }
+    const VulkanLogicalDevice& getLogicalDevice() const { return m_logicalDevice; }
     const PhysicalDevice& getPhysicalDevice() { return m_physicalDevice.getSelectedDevice(); }
     const VkSurfaceKHR& getSurface() const { return m_surface.getSurface(); }
     WindowManager& getWindowManager() { return m_windowManager; }
 
 private:
-    WindowManager m_windowManager {};
+    WindowManager m_windowManager {}; // Non-const because mutates when window resizes
     const VulkanInstance m_instance {};
     const VulkanLogger m_logger = { m_instance };
     const VulkanSurface m_surface { m_windowManager, m_instance };
-    VulkanPhysicalDevice m_physicalDevice = { m_instance, m_surface };
-    const std::shared_ptr<VulkanLogicalDevice> m_logicalDevice = std::make_shared<VulkanLogicalDevice>(m_physicalDevice.getSelectedDevice());
+    VulkanPhysicalDevice m_physicalDevice = { m_instance, m_surface }; // Non-const because selected device properties change over time
+    const VulkanLogicalDevice m_logicalDevice = { m_physicalDevice.getSelectedDevice() };
 };

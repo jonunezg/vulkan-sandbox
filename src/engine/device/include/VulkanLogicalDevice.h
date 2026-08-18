@@ -21,7 +21,6 @@ public:
 
 private:
     VkDevice m_device = VK_NULL_HANDLE;
-
     VkQueue m_graphicsQueue;
     VkQueue m_presentQueue;
 };

@@ -94,7 +94,7 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
         .pPushConstantRanges = nullptr,
     };
 
-    VK_THROW_IF_FAILED(vkCreatePipelineLayout(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &pipelineLayoutCreateInfo, nullptr, &m_vulkanPipelineLayout));
+    VK_THROW_IF_FAILED(vkCreatePipelineLayout(m_vulkanDeviceManager->getLogicalDevice().getDevice(), &pipelineLayoutCreateInfo, nullptr, &m_vulkanPipelineLayout));
 
     LOG_ENGINE_INFO("Vulkan pipeline layout created: " << m_vulkanPipelineLayout);
 
@@ -103,7 +103,7 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
     m_shaders.reserve(shaders.size());
     for(const auto& shader : shaders)
     {
-        m_shaders.emplace_back(shader, m_vulkanDeviceManager->getLogicalDevice()->getDevice());
+        m_shaders.emplace_back(shader, m_vulkanDeviceManager->getLogicalDevice().getDevice());
         shadersCreateInfo.emplace_back(m_shaders.back().getCreateInfo());
     }
 
@@ -133,7 +133,7 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
     };
 
     VK_THROW_IF_FAILED(vkCreateGraphicsPipelines(
-        m_vulkanDeviceManager->getLogicalDevice()->getDevice(),
+        m_vulkanDeviceManager->getLogicalDevice().getDevice(),
         VK_NULL_HANDLE,
         1,
         &pipelineCreateInfo,
@@ -161,48 +161,48 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
     m_inFlightFences.resize(MAX_CONCURRENT_IMAGES);
     for (size_t i = 0 ; i < MAX_CONCURRENT_IMAGES ; i++)
     {
-        VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &semaphoreCreateInfo, nullptr, &m_imageAvailableSemaphores[i]));
-        VK_THROW_IF_FAILED(vkCreateFence(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &fenceCreateInfo, nullptr, &m_inFlightFences[i]));
+        VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice().getDevice(), &semaphoreCreateInfo, nullptr, &m_imageAvailableSemaphores[i]));
+        VK_THROW_IF_FAILED(vkCreateFence(m_vulkanDeviceManager->getLogicalDevice().getDevice(), &fenceCreateInfo, nullptr, &m_inFlightFences[i]));
     }
 
     const auto imageCount = m_swapchain->getImageViews().size();
     m_renderFinishedSemaphores.resize(imageCount);
     for (size_t i = 0 ; i < imageCount ; i++)
     {
-        VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), &semaphoreCreateInfo, nullptr, &m_renderFinishedSemaphores[i]));
+        VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager->getLogicalDevice().getDevice(), &semaphoreCreateInfo, nullptr, &m_renderFinishedSemaphores[i]));
     }
 
 }
 
 VulkanPipelineManager::~VulkanPipelineManager()
 {
-    vkDestroyPipeline(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_pipeline, nullptr);
+    vkDestroyPipeline(m_vulkanDeviceManager->getLogicalDevice().getDevice(), m_pipeline, nullptr);
     LOG_ENGINE_INFO("Vulkan graphics pipeline destroyed: " << m_pipeline);
 
-    vkDestroyPipelineLayout(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_vulkanPipelineLayout, nullptr);
+    vkDestroyPipelineLayout(m_vulkanDeviceManager->getLogicalDevice().getDevice(), m_vulkanPipelineLayout, nullptr);
     LOG_ENGINE_INFO("Vulkan pipeline layout destroyed: " << m_vulkanPipelineLayout);
 
     
     for (size_t i = 0 ; i < MAX_CONCURRENT_IMAGES ; i++)
     {
-        vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_imageAvailableSemaphores[i], nullptr);
-        vkDestroyFence(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_inFlightFences[i], nullptr);
+        vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice().getDevice(), m_imageAvailableSemaphores[i], nullptr);
+        vkDestroyFence(m_vulkanDeviceManager->getLogicalDevice().getDevice(), m_inFlightFences[i], nullptr);
     }
 
     for (size_t i = 0 ; i < m_renderFinishedSemaphores.size() ; i++)
     {
-        vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_renderFinishedSemaphores[i], nullptr);
+        vkDestroySemaphore(m_vulkanDeviceManager->getLogicalDevice().getDevice(), m_renderFinishedSemaphores[i], nullptr);
     }
 
 }
 
 bool VulkanPipelineManager::drawFrame()
 {
-    const VkDevice& device = m_vulkanDeviceManager->getLogicalDevice()->getDevice();
+    const VkDevice& device = m_vulkanDeviceManager->getLogicalDevice().getDevice();
     const VkSwapchainKHR& swapchain = m_swapchain->getSwapchain();
     const VkCommandBuffer& commandBuffer = m_vulkanCommandPool.getCommandBuffer(m_frameIndex);
-    const VkQueue& graphicsQueue = m_vulkanDeviceManager->getLogicalDevice()->getGraphicsQueue();
-    const VkQueue& presentQueue = m_vulkanDeviceManager->getLogicalDevice()->getPresentQueue();
+    const VkQueue& graphicsQueue = m_vulkanDeviceManager->getLogicalDevice().getGraphicsQueue();
+    const VkQueue& presentQueue = m_vulkanDeviceManager->getLogicalDevice().getPresentQueue();
 
     if (shouldClose())
     {
@@ -279,7 +279,7 @@ bool VulkanPipelineManager::drawFrame()
 
 void VulkanPipelineManager::waitDeviceIdle()
 {
-    vkDeviceWaitIdle(m_vulkanDeviceManager->getLogicalDevice()->getDevice());
+    vkDeviceWaitIdle(m_vulkanDeviceManager->getLogicalDevice().getDevice());
 }
 
 void VulkanPipelineManager::recreateSwapchainObjects()
@@ -291,9 +291,9 @@ void VulkanPipelineManager::recreateSwapchainObjects()
     m_swapchain.reset();
     m_vulkanRenderPass.reset();
     m_vulkanFramebuffers.reset();
-    m_swapchain = std::make_unique<VulkanSwapchain>(m_vulkanDeviceManager->getPhysicalDevice(), m_vulkanDeviceManager->getLogicalDevice(), m_vulkanDeviceManager->getSurface(), m_vulkanDeviceManager->getWindowManager());
-    m_vulkanRenderPass = std::make_unique<VulkanRenderPass>(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_swapchain->getSwapchainFormat());
-    m_vulkanFramebuffers = std::make_unique<VulkanFrameBuffers>(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), *m_swapchain, m_vulkanRenderPass->getRenderPass());
+    m_swapchain = std::make_unique<VulkanSwapchain>(m_vulkanDeviceManager->getPhysicalDevice(), m_vulkanDeviceManager->getLogicalDevice().getDevice(), m_vulkanDeviceManager->getSurface(), m_vulkanDeviceManager->getWindowManager());
+    m_vulkanRenderPass = std::make_unique<VulkanRenderPass>(m_vulkanDeviceManager->getLogicalDevice().getDevice(), m_swapchain->getSwapchainFormat());
+    m_vulkanFramebuffers = std::make_unique<VulkanFrameBuffers>(m_vulkanDeviceManager->getLogicalDevice().getDevice(), *m_swapchain, m_vulkanRenderPass->getRenderPass());
 
     LOG_ENGINE_WARNING("Swapchain objects recreation complete");
 }
