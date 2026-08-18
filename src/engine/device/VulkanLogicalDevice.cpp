@@ -4,10 +4,9 @@
 #include "VulkanLayers.h"
 #include "VulkanLogicalDevice.h"
 
-VulkanLogicalDevice::VulkanLogicalDevice(VulkanPhysicalDevice& physicalDevice)
+VulkanLogicalDevice::VulkanLogicalDevice(const PhysicalDevice& device)
 {
     const float priority = 1.0f;
-    const auto& device = physicalDevice.getSelectedDevice();
 
     std::set<uint32_t> indices =
     {

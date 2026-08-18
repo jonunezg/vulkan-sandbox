@@ -7,7 +7,7 @@
 class VulkanLogicalDevice
 {
 public:
-    VulkanLogicalDevice(VulkanPhysicalDevice& physicalDevice);
+    VulkanLogicalDevice(const PhysicalDevice& physicalDevice);
     ~VulkanLogicalDevice();
 
     VulkanLogicalDevice(VulkanLogicalDevice&) = delete;
