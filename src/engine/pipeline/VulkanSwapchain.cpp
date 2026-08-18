@@ -58,34 +58,26 @@ void VulkanSwapchain::createImageViews()
 }
 
 VulkanSwapchain::VulkanSwapchain(
-    const std::shared_ptr<VulkanPhysicalDevice> physicalDevice,
+    const PhysicalDevice& physicalDevice,
     const std::shared_ptr<VulkanLogicalDevice> logicalDevice,
     const VkSurfaceKHR& surface,
     const WindowManager& windowManager) :
-m_physicalDevice { std::move(physicalDevice) },
 m_logicalDevice { std::move(logicalDevice) },
 m_windowManager { std::move(windowManager) },
-m_format { selectSwapchainFormat(m_physicalDevice->getSelectedDevice().formats) },
-m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) }
+m_format { selectSwapchainFormat(physicalDevice.formats) },
+m_extent { selectSwapExtent(physicalDevice.capabilities) }
 {
-    if (!m_physicalDevice)
-    {
-        throw std::runtime_error("Swapchain created without physical device");
-    }
-
     if (!m_logicalDevice)
     {
         throw std::runtime_error("Swapchain created without logical device");
     }
 
-    const auto device = m_physicalDevice->getSelectedDevice();
-
-    const auto mode = selectPresentMode(device.presentModes);
-    const uint32_t imageCount = device.capabilities.maxImageCount > 0
-        ? std::clamp(device.capabilities.minImageCount + 1, device.capabilities.minImageCount, device.capabilities.maxImageCount)
-        : device.capabilities.minImageCount + 1;
-    const bool multiFamily = device.graphicQueueIndex != device.presentQueueIndex;
-    const uint32_t familyIndices[] = { device.graphicQueueIndex.value(), device.presentQueueIndex.value() };
+    const auto mode = selectPresentMode(physicalDevice.presentModes);
+    const uint32_t imageCount = physicalDevice.capabilities.maxImageCount > 0
+        ? std::clamp(physicalDevice.capabilities.minImageCount + 1, physicalDevice.capabilities.minImageCount, physicalDevice.capabilities.maxImageCount)
+        : physicalDevice.capabilities.minImageCount + 1;
+    const bool multiFamily = physicalDevice.graphicQueueIndex != physicalDevice.presentQueueIndex;
+    const uint32_t familyIndices[] = { physicalDevice.graphicQueueIndex.value(), physicalDevice.presentQueueIndex.value() };
 
     const VkSwapchainCreateInfoKHR createInfo
     {
@@ -102,7 +94,7 @@ m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) 
         .imageSharingMode = multiFamily ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
         .queueFamilyIndexCount = multiFamily ? 2u : 0u,
         .pQueueFamilyIndices = multiFamily ? familyIndices : nullptr,
-        .preTransform = device.capabilities.currentTransform,
+        .preTransform = physicalDevice.capabilities.currentTransform,
         .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
         .presentMode = mode,
         .clipped = VK_TRUE, // Don't care about pixels obscured by other windows

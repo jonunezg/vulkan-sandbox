@@ -27,8 +27,7 @@ public:
     const std::shared_ptr<VulkanLogicalDevice> getLogicalDevice() const { return m_logicalDevice; }
     const PhysicalDevice& getPhysicalDevice() const { return m_physicalDevice->getSelectedDevice(); }
 
-    const std::shared_ptr<VulkanPhysicalDevice> getSharedPhysicalDevice() { return m_physicalDevice; }
-    const VkSurfaceKHR& getSurface() { return m_surface.getSurface(); }
+    const VkSurfaceKHR& getSurface() const { return m_surface.getSurface(); }
     WindowManager& getWindowManager() { return m_windowManager; }
 
 private:

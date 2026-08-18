@@ -12,7 +12,7 @@ class VulkanSwapchain
 {
 public:
     VulkanSwapchain(
-        const std::shared_ptr<VulkanPhysicalDevice> physicalDevice,
+        const PhysicalDevice& physicalDevice,
         const std::shared_ptr<VulkanLogicalDevice> logicalDevice,
         const VkSurfaceKHR& surface,
         const WindowManager& windowManager);
@@ -31,7 +31,6 @@ private:
     VkExtent2D selectSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
     void createImageViews();
 
-    const std::shared_ptr<VulkanPhysicalDevice> m_physicalDevice;
     const std::shared_ptr<VulkanLogicalDevice> m_logicalDevice;
     const WindowManager& m_windowManager;
     const VkSurfaceFormatKHR m_format;
