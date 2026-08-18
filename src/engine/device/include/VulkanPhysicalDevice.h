@@ -30,19 +30,19 @@ class VulkanPhysicalDevice
 public:
     VulkanPhysicalDevice(
         const VulkanInstance& instance,
-        const std::shared_ptr<VulkanSurface> surface);
+        const VulkanSurface& surface);
     ~VulkanPhysicalDevice();
 
-    const PhysicalDevice& getSelectedDevice() { UpdateSwapchainSupportSettings(m_surface->getSurface(), m_selectedDevice); return m_selectedDevice; }
+    const PhysicalDevice& getSelectedDevice() { UpdateSwapchainSupportSettings(m_surface.getSurface(), m_selectedDevice); return m_selectedDevice; }
 
 private:
     std::vector<PhysicalDevice> getPhysicalDevices();
 
-    void UpdateSwapchainSupportSettings(VkSurfaceKHR surface, PhysicalDevice& storage);
+    void UpdateSwapchainSupportSettings(const VkSurfaceKHR& surface, PhysicalDevice& storage);
 
     void processQueueFamilies(PhysicalDevice& device);
 
     PhysicalDevice m_selectedDevice;
     const VulkanInstance& m_instance;
-    const std::shared_ptr<VulkanSurface> m_surface;
+    const VulkanSurface& m_surface;
 };

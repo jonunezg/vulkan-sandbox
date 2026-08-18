@@ -8,11 +8,12 @@
 class VulkanSurface
 {
 public:
-    VulkanSurface(const WindowManager& windowManager,
-    const VulkanInstance& instance);
+    VulkanSurface(
+        const WindowManager& windowManager,
+        const VulkanInstance& instance);
     ~VulkanSurface();
 
-    const VkSurfaceKHR getSurface() { return m_surface; }
+    const VkSurfaceKHR& getSurface() const { return m_surface; }
 
 private:
     const VulkanInstance& m_instance;

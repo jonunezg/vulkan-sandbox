@@ -83,7 +83,7 @@ void VulkanPhysicalDevice::processQueueFamilies(PhysicalDevice& device)
         if(!device.presentQueueIndex)
         {
             VkBool32 presentSupport = false;
-            vkGetPhysicalDeviceSurfaceSupportKHR(device.device, i, m_surface->getSurface(), &presentSupport);
+            vkGetPhysicalDeviceSurfaceSupportKHR(device.device, i, m_surface.getSurface(), &presentSupport);
             if (presentSupport)
             {
                 device.presentQueueIndex = i;
@@ -139,7 +139,7 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
 
         if (deviceSupportsRequiredExtensions(*i))
         {
-            UpdateSwapchainSupportSettings(m_surface->getSurface(), *i);
+            UpdateSwapchainSupportSettings(m_surface.getSurface(), *i);
         }
 
         i++;
@@ -148,7 +148,7 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
     return devicesInfo;
 }
 
-void VulkanPhysicalDevice::UpdateSwapchainSupportSettings(VkSurfaceKHR surface, PhysicalDevice& storage)
+void VulkanPhysicalDevice::UpdateSwapchainSupportSettings(const VkSurfaceKHR& surface, PhysicalDevice& storage)
 {
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(storage.device, surface, &storage.capabilities);
 
@@ -174,15 +174,10 @@ void VulkanPhysicalDevice::UpdateSwapchainSupportSettings(VkSurfaceKHR surface, 
 
 VulkanPhysicalDevice::VulkanPhysicalDevice(
     const VulkanInstance& instance,
-    const std::shared_ptr<VulkanSurface> surface) :
+    const VulkanSurface& surface) :
 m_instance { std::move(instance) },
 m_surface { std::move(surface) }
 {
-    if (!m_surface)
-    {
-        throw std::runtime_error("Physical device created without Vulkan surface");
-    }
-
     const auto devices = getPhysicalDevices();
 
     if (VK_ENABLE_DEBUG)

@@ -60,11 +60,10 @@ void VulkanSwapchain::createImageViews()
 VulkanSwapchain::VulkanSwapchain(
     const std::shared_ptr<VulkanPhysicalDevice> physicalDevice,
     const std::shared_ptr<VulkanLogicalDevice> logicalDevice,
-    const std::shared_ptr<VulkanSurface> surface,
+    const VkSurfaceKHR& surface,
     const WindowManager& windowManager) :
 m_physicalDevice { std::move(physicalDevice) },
 m_logicalDevice { std::move(logicalDevice) },
-m_surface { std::move(surface) },
 m_windowManager { std::move(windowManager) },
 m_format { selectSwapchainFormat(m_physicalDevice->getSelectedDevice().formats) },
 m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) }
@@ -77,11 +76,6 @@ m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) 
     if (!m_logicalDevice)
     {
         throw std::runtime_error("Swapchain created without logical device");
-    }
-
-    if (!m_surface)
-    {
-        throw std::runtime_error("Swapchain created without surface");
     }
 
     const auto device = m_physicalDevice->getSelectedDevice();
@@ -98,7 +92,7 @@ m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) 
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
         .pNext = nullptr,
         .flags = 0,
-        .surface = m_surface->getSurface(),
+        .surface = surface,
         .minImageCount = imageCount,
         .imageFormat = m_format.format,
         .imageColorSpace = m_format.colorSpace,
