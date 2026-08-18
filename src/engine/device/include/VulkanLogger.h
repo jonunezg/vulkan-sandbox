@@ -47,7 +47,7 @@ using namespace std::literals::string_literals;
 class VulkanLogger
 {
 public:
-    VulkanLogger(std::shared_ptr<VulkanInstance> instance);
+    VulkanLogger(const VulkanInstance& instance);
 
     static const VkDebugUtilsMessengerCreateInfoEXT *getDebuggerMessengerInfo();
 
@@ -55,5 +55,5 @@ public:
 
 private:
     VkDebugUtilsMessengerEXT m_debugMessenger;
-    const std::shared_ptr<VulkanInstance> m_instance;
+    const VulkanInstance& m_instance;
 };

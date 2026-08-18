@@ -115,14 +115,9 @@ void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 
 // Class implementation
 
-VulkanLogger::VulkanLogger(std::shared_ptr<VulkanInstance> instance) :
+VulkanLogger::VulkanLogger(const VulkanInstance& instance) :
 m_instance { std::move(instance) }
 {
-    if (!m_instance)
-    {
-        throw std::runtime_error("Logger created without Vulkan instance");
-    }
-
     if (!VK_ENABLE_DEBUG)
     {
         return;
@@ -130,14 +125,14 @@ m_instance { std::move(instance) }
 
     const auto createInfo = getDebuggerMessengerInfo();
 
-    VK_THROW_IF_FAILED(createDebugUtilsMessengerEXT(m_instance->getInstance(), createInfo, &m_debugMessenger));
+    VK_THROW_IF_FAILED(createDebugUtilsMessengerEXT(m_instance.getInstance(), createInfo, &m_debugMessenger));
 }
 
 VulkanLogger::~VulkanLogger()
 {
     if (m_debugMessenger)
     {
-        destroyDebugUtilsMessengerEXT(m_instance->getInstance(), m_debugMessenger);
+        destroyDebugUtilsMessengerEXT(m_instance.getInstance(), m_debugMessenger);
         LOG_ENGINE_INFO("Vulkan logger destroyed");
     }
 }

@@ -29,7 +29,7 @@ class VulkanPhysicalDevice
 {
 public:
     VulkanPhysicalDevice(
-        const std::shared_ptr<VulkanInstance> instance,
+        const VulkanInstance& instance,
         const std::shared_ptr<VulkanSurface> surface);
     ~VulkanPhysicalDevice();
 
@@ -43,6 +43,6 @@ private:
     void processQueueFamilies(PhysicalDevice& device);
 
     PhysicalDevice m_selectedDevice;
-    const std::shared_ptr<VulkanInstance> m_instance;
+    const VulkanInstance& m_instance;
     const std::shared_ptr<VulkanSurface> m_surface;
 };

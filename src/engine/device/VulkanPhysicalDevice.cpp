@@ -100,7 +100,7 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
 {
     uint32_t deviceCount = 0;
 
-    VK_THROW_IF_FAILED(vkEnumeratePhysicalDevices(m_instance->getInstance(), &deviceCount, nullptr));
+    VK_THROW_IF_FAILED(vkEnumeratePhysicalDevices(m_instance.getInstance(), &deviceCount, nullptr));
     
     if (deviceCount == 0)
     {
@@ -109,7 +109,7 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
 
     std::vector<VkPhysicalDevice> devices { deviceCount };
     
-    VK_THROW_IF_FAILED(vkEnumeratePhysicalDevices(m_instance->getInstance(), &deviceCount, devices.data()));
+    VK_THROW_IF_FAILED(vkEnumeratePhysicalDevices(m_instance.getInstance(), &deviceCount, devices.data()));
 
     std::vector<PhysicalDevice> devicesInfo { deviceCount };
     auto i = devicesInfo.begin();
@@ -173,14 +173,14 @@ void VulkanPhysicalDevice::UpdateSwapchainSupportSettings(VkSurfaceKHR surface, 
 }
 
 VulkanPhysicalDevice::VulkanPhysicalDevice(
-    const std::shared_ptr<VulkanInstance> instance,
+    const VulkanInstance& instance,
     const std::shared_ptr<VulkanSurface> surface) :
 m_instance { std::move(instance) },
 m_surface { std::move(surface) }
 {
-    if (!m_instance || !m_surface)
+    if (!m_surface)
     {
-        throw std::runtime_error("Physical device created without Vulkan instance or surface");
+        throw std::runtime_error("Physical device created without Vulkan surface");
     }
 
     const auto devices = getPhysicalDevices();

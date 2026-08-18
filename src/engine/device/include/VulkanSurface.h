@@ -9,12 +9,12 @@ class VulkanSurface
 {
 public:
     VulkanSurface(const WindowManager& windowManager,
-    const std::shared_ptr<VulkanInstance> instance);
+    const VulkanInstance& instance);
     ~VulkanSurface();
 
     const VkSurfaceKHR getSurface() { return m_surface; }
 
 private:
-    const std::shared_ptr<VulkanInstance> m_instance;
+    const VulkanInstance& m_instance;
     VkSurfaceKHR m_surface;
 };

@@ -22,7 +22,7 @@ public:
     VulkanDeviceManager(VulkanDeviceManager&&) = delete;
     VulkanDeviceManager(const VulkanDeviceManager&&) = delete;
 
-    bool shouldClose() { return m_windowManager.windowShouldClose(); }
+    bool shouldClose() const { return m_windowManager.windowShouldClose(); }
 
     const std::shared_ptr<VulkanLogicalDevice> getLogicalDevice() const { return m_logicalDevice; }
     const PhysicalDevice& getPhysicalDevice() const { return m_physicalDevice->getSelectedDevice(); }
@@ -34,7 +34,7 @@ public:
 private:
     // Vulkan objects following RAII pattern
     WindowManager m_windowManager {};
-    const std::shared_ptr<VulkanInstance> m_instance = std::make_shared<VulkanInstance>();
+    const VulkanInstance m_instance {};
     const VulkanLogger m_logger = { m_instance };
     const std::shared_ptr<VulkanSurface> m_surface = std::make_shared<VulkanSurface>(m_windowManager, m_instance);
     const std::shared_ptr<VulkanPhysicalDevice> m_physicalDevice = std::make_shared<VulkanPhysicalDevice>(m_instance, m_surface);
