@@ -33,14 +33,12 @@ public:
         const VulkanSurface& surface);
     ~VulkanPhysicalDevice();
 
-    const PhysicalDevice& getSelectedDevice() { UpdateSwapchainSupportSettings(m_surface.getSurface(), m_selectedDevice); return m_selectedDevice; }
+    const PhysicalDevice& getSelectedDevice();
 
 private:
-    std::vector<PhysicalDevice> getPhysicalDevices();
-
-    void UpdateSwapchainSupportSettings(const VkSurfaceKHR& surface, PhysicalDevice& storage);
-
-    void processQueueFamilies(PhysicalDevice& device);
+    const std::vector<PhysicalDevice> getPhysicalDevices() const;
+    void UpdateSwapchainSupportSettings(const VkSurfaceKHR& surface, PhysicalDevice& storage) const;
+    void processQueueFamilies(PhysicalDevice& device) const;
 
     PhysicalDevice m_selectedDevice;
     const VulkanInstance& m_instance;

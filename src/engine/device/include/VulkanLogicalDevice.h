@@ -7,17 +7,19 @@
 class VulkanLogicalDevice
 {
 public:
-    VulkanLogicalDevice(const std::shared_ptr<VulkanPhysicalDevice> physicalDevice);
+    VulkanLogicalDevice(VulkanPhysicalDevice& physicalDevice);
     ~VulkanLogicalDevice();
 
-    const VkDevice& getDevice() { return m_device; }
+    VulkanLogicalDevice(VulkanLogicalDevice&) = delete;
+    VulkanLogicalDevice(const VulkanLogicalDevice&) = delete;
+    VulkanLogicalDevice(VulkanLogicalDevice&&) = delete;
+    VulkanLogicalDevice(const VulkanLogicalDevice&&) = delete;
 
+    const VkDevice& getDevice() const { return m_device; }
     const VkQueue& getGraphicsQueue() const { return m_graphicsQueue; }
-
     const VkQueue& getPresentQueue() const { return m_presentQueue; }
 
 private:
-    const std::shared_ptr<VulkanPhysicalDevice> m_physicalDevice;
     VkDevice m_device = VK_NULL_HANDLE;
 
     VkQueue m_graphicsQueue;

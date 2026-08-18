@@ -23,19 +23,16 @@ public:
     VulkanDeviceManager(const VulkanDeviceManager&&) = delete;
 
     bool shouldClose() const { return m_windowManager.windowShouldClose(); }
-
     const std::shared_ptr<VulkanLogicalDevice> getLogicalDevice() const { return m_logicalDevice; }
-    const PhysicalDevice& getPhysicalDevice() const { return m_physicalDevice->getSelectedDevice(); }
-
+    const PhysicalDevice& getPhysicalDevice() { return m_physicalDevice.getSelectedDevice(); }
     const VkSurfaceKHR& getSurface() const { return m_surface.getSurface(); }
     WindowManager& getWindowManager() { return m_windowManager; }
 
 private:
-    // Vulkan objects following RAII pattern
     WindowManager m_windowManager {};
     const VulkanInstance m_instance {};
     const VulkanLogger m_logger = { m_instance };
     const VulkanSurface m_surface { m_windowManager, m_instance };
-    const std::shared_ptr<VulkanPhysicalDevice> m_physicalDevice = std::make_shared<VulkanPhysicalDevice>(m_instance, m_surface);
+    VulkanPhysicalDevice m_physicalDevice = { m_instance, m_surface };
     const std::shared_ptr<VulkanLogicalDevice> m_logicalDevice = std::make_shared<VulkanLogicalDevice>(m_physicalDevice);
 };

@@ -4,20 +4,15 @@
 #include "VulkanLayers.h"
 #include "VulkanLogicalDevice.h"
 
-VulkanLogicalDevice::VulkanLogicalDevice(const std::shared_ptr<VulkanPhysicalDevice> physicalDevice) :
-m_physicalDevice { std::move(physicalDevice) }
+VulkanLogicalDevice::VulkanLogicalDevice(VulkanPhysicalDevice& physicalDevice)
 {
-    if (!m_physicalDevice)
-    {
-        throw std::runtime_error("Logical device created without physical device");
-    }
-
     const float priority = 1.0f;
+    const auto& device = physicalDevice.getSelectedDevice();
 
     std::set<uint32_t> indices =
     {
-        m_physicalDevice->getSelectedDevice().graphicQueueIndex.value(),
-        m_physicalDevice->getSelectedDevice().presentQueueIndex.value()
+        device.graphicQueueIndex.value(),
+        device.presentQueueIndex.value()
     };
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfo;
@@ -53,10 +48,10 @@ m_physicalDevice { std::move(physicalDevice) }
         .pEnabledFeatures = &deviceFeatures,
     };
 
-    VK_THROW_IF_FAILED(vkCreateDevice(m_physicalDevice->getSelectedDevice().device, &createInfo, nullptr, &m_device));
+    VK_THROW_IF_FAILED(vkCreateDevice(device.device, &createInfo, nullptr, &m_device));
 
-    vkGetDeviceQueue(m_device, m_physicalDevice->getSelectedDevice().graphicQueueIndex.value(), 0, &m_graphicsQueue);
-    vkGetDeviceQueue(m_device, m_physicalDevice->getSelectedDevice().presentQueueIndex.value(), 0, &m_presentQueue);
+    vkGetDeviceQueue(m_device, device.graphicQueueIndex.value(), 0, &m_graphicsQueue);
+    vkGetDeviceQueue(m_device, device.presentQueueIndex.value(), 0, &m_presentQueue);
 
     LOG_ENGINE_INFO("Vulkan logical device created: " << m_device);
     LOG_ENGINE_INFO("Graphics queue: " << m_graphicsQueue);

@@ -69,7 +69,7 @@ const PhysicalDevice& selectDevice(const std::vector<PhysicalDevice>& devices)
     throw std::runtime_error("No suitable device");
 }
 
-void VulkanPhysicalDevice::processQueueFamilies(PhysicalDevice& device)
+void VulkanPhysicalDevice::processQueueFamilies(PhysicalDevice& device) const
 {
     uint32_t i = 0;
 
@@ -96,7 +96,7 @@ void VulkanPhysicalDevice::processQueueFamilies(PhysicalDevice& device)
 
 // Class methods
 
-std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
+const std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices() const
 {
     uint32_t deviceCount = 0;
 
@@ -148,7 +148,7 @@ std::vector<PhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices()
     return devicesInfo;
 }
 
-void VulkanPhysicalDevice::UpdateSwapchainSupportSettings(const VkSurfaceKHR& surface, PhysicalDevice& storage)
+void VulkanPhysicalDevice::UpdateSwapchainSupportSettings(const VkSurfaceKHR& surface, PhysicalDevice& storage) const
 {
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(storage.device, surface, &storage.capabilities);
 
@@ -170,6 +170,12 @@ void VulkanPhysicalDevice::UpdateSwapchainSupportSettings(const VkSurfaceKHR& su
         storage.presentModes.resize(presentModeCount);
         vkGetPhysicalDeviceSurfacePresentModesKHR(storage.device, surface, &presentModeCount, storage.presentModes.data());
     }
+}
+
+const PhysicalDevice& VulkanPhysicalDevice::getSelectedDevice()
+{ 
+    UpdateSwapchainSupportSettings(m_surface.getSurface(), m_selectedDevice);
+    return m_selectedDevice;
 }
 
 VulkanPhysicalDevice::VulkanPhysicalDevice(
