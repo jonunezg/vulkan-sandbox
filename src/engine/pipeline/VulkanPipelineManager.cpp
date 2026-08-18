@@ -263,7 +263,7 @@ bool VulkanPipelineManager::drawFrame()
     };
 
     result = vkQueuePresentKHR(presentQueue, &presentInfo);
-    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_vulkanDeviceManager->getSharedWindowManager()->windowResized())
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_vulkanDeviceManager->getWindowManager().windowResized())
     {
         recreateSwapchainObjects();
     }
@@ -287,11 +287,11 @@ void VulkanPipelineManager::recreateSwapchainObjects()
     LOG_ENGINE_WARNING("Swapchain objects recreation started");
 
     waitDeviceIdle();
-    m_vulkanDeviceManager->getSharedWindowManager()->pauseWhileMinimized();
+    m_vulkanDeviceManager->getWindowManager().pauseWhileMinimized();
     m_swapchain.reset();
     m_vulkanRenderPass.reset();
     m_vulkanFramebuffers.reset();
-    m_swapchain = std::make_unique<VulkanSwapchain>(m_vulkanDeviceManager->getSharedPhysicalDevice(), m_vulkanDeviceManager->getLogicalDevice(), m_vulkanDeviceManager->getSharedSurface(), m_vulkanDeviceManager->getSharedWindowManager());
+    m_swapchain = std::make_unique<VulkanSwapchain>(m_vulkanDeviceManager->getSharedPhysicalDevice(), m_vulkanDeviceManager->getLogicalDevice(), m_vulkanDeviceManager->getSharedSurface(), m_vulkanDeviceManager->getWindowManager());
     m_vulkanRenderPass = std::make_unique<VulkanRenderPass>(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_swapchain->getSwapchainFormat());
     m_vulkanFramebuffers = std::make_unique<VulkanFrameBuffers>(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), *m_swapchain, m_vulkanRenderPass->getRenderPass());
 

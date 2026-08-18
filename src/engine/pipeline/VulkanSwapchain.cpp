@@ -38,7 +38,7 @@ VkExtent2D VulkanSwapchain::selectSwapExtent(const VkSurfaceCapabilitiesKHR& cap
     else
     {
         // Get the extent size using GLFW
-        const auto bufferSize = m_windowManager->getFrameBufferSize();
+        const auto bufferSize = m_windowManager.getFrameBufferSize();
 
         return
         {
@@ -61,7 +61,7 @@ VulkanSwapchain::VulkanSwapchain(
     const std::shared_ptr<VulkanPhysicalDevice> physicalDevice,
     const std::shared_ptr<VulkanLogicalDevice> logicalDevice,
     const std::shared_ptr<VulkanSurface> surface,
-    const std::shared_ptr<WindowManager> windowManager) :
+    const WindowManager& windowManager) :
 m_physicalDevice { std::move(physicalDevice) },
 m_logicalDevice { std::move(logicalDevice) },
 m_surface { std::move(surface) },
@@ -82,11 +82,6 @@ m_extent { selectSwapExtent(m_physicalDevice->getSelectedDevice().capabilities) 
     if (!m_surface)
     {
         throw std::runtime_error("Swapchain created without surface");
-    }
-
-    if (!m_windowManager)
-    {
-        throw std::runtime_error("Swapchain created without window manager");
     }
 
     const auto device = m_physicalDevice->getSelectedDevice();

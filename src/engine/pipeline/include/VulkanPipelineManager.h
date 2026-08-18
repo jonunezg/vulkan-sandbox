@@ -28,7 +28,7 @@ private:
     const std::shared_ptr<VulkanDeviceManager> m_vulkanDeviceManager = std::make_shared<VulkanDeviceManager>();
     const VulkanDynamicState m_vulkanDynamicState{};
 
-    std::unique_ptr<VulkanSwapchain> m_swapchain = std::make_unique<VulkanSwapchain>(m_vulkanDeviceManager->getSharedPhysicalDevice(), m_vulkanDeviceManager->getLogicalDevice(), m_vulkanDeviceManager->getSharedSurface(), m_vulkanDeviceManager->getSharedWindowManager());
+    std::unique_ptr<VulkanSwapchain> m_swapchain = std::make_unique<VulkanSwapchain>(m_vulkanDeviceManager->getSharedPhysicalDevice(), m_vulkanDeviceManager->getLogicalDevice(), m_vulkanDeviceManager->getSharedSurface(), m_vulkanDeviceManager->getWindowManager());
     std::unique_ptr<VulkanRenderPass> m_vulkanRenderPass = std::make_unique<VulkanRenderPass>(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), m_swapchain->getSwapchainFormat());
     std::unique_ptr<VulkanFrameBuffers> m_vulkanFramebuffers = std::make_unique<VulkanFrameBuffers>(m_vulkanDeviceManager->getLogicalDevice()->getDevice(), *m_swapchain, m_vulkanRenderPass->getRenderPass());
     
