@@ -115,8 +115,8 @@ void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 
 // Class implementation
 
-VulkanLogger::VulkanLogger(const VulkanInstance& instance) :
-m_instance { std::move(instance) }
+VulkanLogger::VulkanLogger(const VkInstance& instance) :
+m_instance { instance }
 {
     if (!VK_ENABLE_DEBUG)
     {
@@ -125,14 +125,14 @@ m_instance { std::move(instance) }
 
     const auto createInfo = getDebuggerMessengerInfo();
 
-    VK_THROW_IF_FAILED(createDebugUtilsMessengerEXT(m_instance.getInstance(), createInfo, &m_debugMessenger));
+    VK_THROW_IF_FAILED(createDebugUtilsMessengerEXT(m_instance, createInfo, &m_debugMessenger));
 }
 
 VulkanLogger::~VulkanLogger()
 {
     if (m_debugMessenger)
     {
-        destroyDebugUtilsMessengerEXT(m_instance.getInstance(), m_debugMessenger);
+        destroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger);
         LOG_ENGINE_INFO("Vulkan logger destroyed");
     }
 }

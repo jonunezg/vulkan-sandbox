@@ -9,13 +9,13 @@ class VulkanSurface
 {
 public:
     VulkanSurface(
-        const WindowManager& windowManager,
-        const VulkanInstance& instance);
+        GLFWwindow* window,
+        const VkInstance& instance);
     ~VulkanSurface();
 
     const VkSurfaceKHR& getSurface() const { return m_surface; }
 
 private:
-    const VulkanInstance& m_instance;
+    const VkInstance& m_instance;
     VkSurfaceKHR m_surface;
 };

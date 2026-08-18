@@ -47,7 +47,7 @@ using namespace std::literals::string_literals;
 class VulkanLogger
 {
 public:
-    VulkanLogger(const VulkanInstance& instance);
+    VulkanLogger(const VkInstance& instance);
 
     static const VkDebugUtilsMessengerCreateInfoEXT *getDebuggerMessengerInfo();
 
@@ -55,5 +55,5 @@ public:
 
 private:
     VkDebugUtilsMessengerEXT m_debugMessenger;
-    const VulkanInstance& m_instance;
+    const VkInstance& m_instance;
 };

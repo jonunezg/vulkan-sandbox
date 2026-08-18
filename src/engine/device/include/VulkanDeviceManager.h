@@ -31,8 +31,8 @@ public:
 private:
     WindowManager m_windowManager {}; // Non-const because mutates when window resizes
     const VulkanInstance m_instance {};
-    const VulkanLogger m_logger = { m_instance };
-    const VulkanSurface m_surface { m_windowManager, m_instance };
+    const VulkanLogger m_logger = { m_instance.getInstance() };
+    const VulkanSurface m_surface { m_windowManager.getWindowHandle(), m_instance.getInstance() };
     VulkanPhysicalDevice m_physicalDevice = { m_instance, m_surface }; // Non-const because selected device properties change over time
     const VulkanLogicalDevice m_logicalDevice = { m_physicalDevice.getSelectedDevice() };
 };

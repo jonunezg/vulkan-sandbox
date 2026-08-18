@@ -288,9 +288,7 @@ void VulkanPipelineManager::recreateSwapchainObjects()
 
     waitDeviceIdle();
     m_vulkanDeviceManager->getWindowManager().pauseWhileMinimized();
-    m_swapchain.reset();
-    m_vulkanRenderPass.reset();
-    m_vulkanFramebuffers.reset();
+    m_swapchain.reset(); // Current swapchain needs to be destroyed before a new one can be created
     m_swapchain = std::make_unique<VulkanSwapchain>(m_vulkanDeviceManager->getPhysicalDevice(), m_vulkanDeviceManager->getLogicalDevice().getDevice(), m_vulkanDeviceManager->getSurface(), m_vulkanDeviceManager->getWindowManager());
     m_vulkanRenderPass = std::make_unique<VulkanRenderPass>(m_vulkanDeviceManager->getLogicalDevice().getDevice(), m_swapchain->getSwapchainFormat());
     m_vulkanFramebuffers = std::make_unique<VulkanFrameBuffers>(m_vulkanDeviceManager->getLogicalDevice().getDevice(), *m_swapchain, m_vulkanRenderPass->getRenderPass());
