@@ -22,17 +22,17 @@ public:
 
 private:
     void recreateSwapchainObjects();
-    bool shouldClose() { return m_vulkanDeviceManager->shouldClose(); }
+    bool shouldClose() { return m_vulkanDeviceManager.shouldClose(); }
     void waitDeviceIdle();
 
-    const std::shared_ptr<VulkanDeviceManager> m_vulkanDeviceManager = std::make_shared<VulkanDeviceManager>();
-    const VulkanDynamicState m_vulkanDynamicState{};
+    VulkanDeviceManager m_vulkanDeviceManager {};
+    const VulkanDynamicState m_vulkanDynamicState {};
 
-    std::unique_ptr<VulkanSwapchain> m_swapchain = std::make_unique<VulkanSwapchain>(m_vulkanDeviceManager->getPhysicalDevice(), m_vulkanDeviceManager->getLogicalDevice().getDevice(), m_vulkanDeviceManager->getSurface(), m_vulkanDeviceManager->getWindowManager());
-    std::unique_ptr<VulkanRenderPass> m_vulkanRenderPass = std::make_unique<VulkanRenderPass>(m_vulkanDeviceManager->getLogicalDevice().getDevice(), m_swapchain->getSwapchainFormat());
-    std::unique_ptr<VulkanFrameBuffers> m_vulkanFramebuffers = std::make_unique<VulkanFrameBuffers>(m_vulkanDeviceManager->getLogicalDevice().getDevice(), *m_swapchain, m_vulkanRenderPass->getRenderPass());
+    std::unique_ptr<VulkanSwapchain> m_swapchain = std::make_unique<VulkanSwapchain>(m_vulkanDeviceManager.getPhysicalDevice(), m_vulkanDeviceManager.getLogicalDevice().getDevice(), m_vulkanDeviceManager.getSurface(), m_vulkanDeviceManager.getWindowManager());
+    std::unique_ptr<VulkanRenderPass> m_vulkanRenderPass = std::make_unique<VulkanRenderPass>(m_vulkanDeviceManager.getLogicalDevice().getDevice(), m_swapchain->getSwapchainFormat());
+    std::unique_ptr<VulkanFrameBuffers> m_vulkanFramebuffers = std::make_unique<VulkanFrameBuffers>(m_vulkanDeviceManager.getLogicalDevice().getDevice(), *m_swapchain, m_vulkanRenderPass->getRenderPass());
     
-    VulkanCommandPool m_vulkanCommandPool{ m_vulkanDeviceManager->getLogicalDevice().getDevice(), m_vulkanDeviceManager->getPhysicalDevice() };
+    VulkanCommandPool m_vulkanCommandPool{ m_vulkanDeviceManager.getLogicalDevice().getDevice(), m_vulkanDeviceManager.getPhysicalDevice() };
 
     VkPipelineLayout m_vulkanPipelineLayout;
     std::vector<VulkanShaderModule> m_shaders;
