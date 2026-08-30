@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 add_library(vulkan_pipeline STATIC
+    ./VulkanBuffer.cpp
     ./VulkanCommandPool.cpp
     ./VulkanDynamicState.cpp
     ./VulkanFramebuffers.cpp

@@ -1,16 +1,18 @@
 #pragma once
 
+#include "VulkanBuffer.h"
 #include "VulkanCommandPool.h"
 #include "VulkanDeviceManager.h"
 #include "VulkanDynamicState.h"
 #include "VulkanFramebuffers.h"
 #include "VulkanRenderPass.h"
 #include "VulkanShaderModule.h"
+#include "VulkanVertexInput.h"
 
 class VulkanPipelineManager
 {
 public:
-    VulkanPipelineManager(const std::vector<Shader>& shaders);
+    VulkanPipelineManager(const std::vector<Shader>& shaders, const std::vector<Geometry::Vertex>& vertices);
     ~VulkanPipelineManager();
 
     VulkanPipelineManager(VulkanPipelineManager&) = delete;
@@ -33,6 +35,8 @@ private:
     std::unique_ptr<VulkanFrameBuffers> m_vulkanFramebuffers = std::make_unique<VulkanFrameBuffers>(m_vulkanDeviceManager.getLogicalDevice().getDevice(), *m_swapchain, m_vulkanRenderPass->getRenderPass());
     
     VulkanCommandPool m_vulkanCommandPool{ m_vulkanDeviceManager.getLogicalDevice().getDevice(), m_vulkanDeviceManager.getPhysicalDevice() };
+
+    VulkanBuffer m_vertexBuffer;
 
     VkPipelineLayout m_vulkanPipelineLayout;
     std::vector<VulkanShaderModule> m_shaders;

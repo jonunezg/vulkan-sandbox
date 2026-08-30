@@ -30,7 +30,16 @@ private:
     void cleanup() {        
     }
 
-    VulkanPipelineManager m_vulkanPipelineManager {std::vector<Shader>{ { ShaderType::Vertex, "triangle_vert.spv" }, { ShaderType::Fragment , "triangle_frag.spv" } }};
+    VulkanPipelineManager m_vulkanPipelineManager
+    {
+        std::vector<Shader>{ { ShaderType::Vertex, "triangle_vert.spv" }, { ShaderType::Fragment , "triangle_frag.spv" } },
+        std::vector<Geometry::Vertex>
+        {
+            { { 0.0f, -0.5f }, { 1.0f, 0.0f, 1.0f } },
+            { { 0.5f,  0.5f }, { 0.0f, 1.0f, 0.0f } },
+            { {-0.5f,  0.5f }, { 0.0f, 0.0f, 1.0f } }
+        }
+    };
 };
 
 int main()

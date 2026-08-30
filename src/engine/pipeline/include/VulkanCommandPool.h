@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Utilities.h"
+#include "VulkanBuffer.h"
 #include "VulkanLogger.h"
 #include "VulkanIncludes.h"
 #include "VulkanPhysicalDevice.h"
@@ -22,7 +23,8 @@ public:
         VkRenderPass renderPass,
         const std::vector<VkFramebuffer>& framebuffers,
         VkExtent2D swapchainExtent,
-        VkPipeline pipeline);
+        VkPipeline pipeline,
+        const VulkanBuffer& vertexBuffer);
 
     const VkCommandBuffer& getCommandBuffer(size_t index) const { return m_commandBuffers[index]; }
 

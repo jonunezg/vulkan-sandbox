@@ -55,7 +55,8 @@ void VulkanCommandPool::recordCommandBuffer(
     VkRenderPass renderPass,
     const std::vector<VkFramebuffer>& framebuffers,
     VkExtent2D swapchainExtent,
-    VkPipeline pipeline)
+    VkPipeline pipeline,
+    const VulkanBuffer& vertexBuffer)
 {
     VkCommandBufferBeginInfo beginInfo
     {
@@ -82,6 +83,10 @@ void VulkanCommandPool::recordCommandBuffer(
     vkCmdBeginRenderPass(m_commandBuffers[frameIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     vkCmdBindPipeline(m_commandBuffers[frameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+
+    VkBuffer vertexBuffers[] = { vertexBuffer.getBuffer() };
+    VkDeviceSize offsets[] = { 0 };
+    vkCmdBindVertexBuffers(m_commandBuffers[frameIndex], 0, 1, vertexBuffers, offsets);
 
     const VkViewport viewport
     {

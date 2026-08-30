@@ -1,16 +1,21 @@
 #include "VulkanPipelineManager.h"
 
-VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
+VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders, const std::vector<Geometry::Vertex>& vertices) :
+m_vertexBuffer { m_vulkanDeviceManager.getPhysicalDevice(), m_vulkanDeviceManager.getLogicalDevice().getDevice(), vertices }
 {
+
+    const auto bindingDescription = Geometry::Vertex::getBindingDescription();
+    const auto attributeDescriptions = Geometry::Vertex::getAttributeDescriptions();
+
     VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo
     {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
         .pNext = nullptr,
         .flags = 0,
-        .vertexBindingDescriptionCount = 0,
-        .pVertexBindingDescriptions = nullptr,
-        .vertexAttributeDescriptionCount = 0,
-        .pVertexAttributeDescriptions = nullptr,
+        .vertexBindingDescriptionCount = 1,
+        .pVertexBindingDescriptions = &bindingDescription,
+        .vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size()),
+        .pVertexAttributeDescriptions = attributeDescriptions.data(),
     };
 
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyCreateInfo
@@ -171,7 +176,6 @@ VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders)
     {
         VK_THROW_IF_FAILED(vkCreateSemaphore(m_vulkanDeviceManager.getLogicalDevice().getDevice(), &semaphoreCreateInfo, nullptr, &m_renderFinishedSemaphores[i]));
     }
-
 }
 
 VulkanPipelineManager::~VulkanPipelineManager()
@@ -231,7 +235,8 @@ bool VulkanPipelineManager::drawFrame()
         m_vulkanRenderPass->getRenderPass(),
         m_vulkanFramebuffers->getFramebuffers(),
         m_swapchain->getSwapchainExtent(),
-        m_pipeline);
+        m_pipeline,
+        m_vertexBuffer);
 
     const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
