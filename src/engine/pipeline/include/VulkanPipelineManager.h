@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VulkanBuffer.h"
+#include "VulkanVertexBuffer.h"
 #include "VulkanCommandPool.h"
 #include "VulkanDeviceManager.h"
 #include "VulkanDynamicState.h"
@@ -36,7 +36,7 @@ private:
     
     VulkanCommandPool m_vulkanCommandPool{ m_vulkanDeviceManager.getLogicalDevice().getDevice(), m_vulkanDeviceManager.getPhysicalDevice() };
 
-    VulkanBuffer m_vertexBuffer;
+    VulkanVertexBuffer m_vertexBuffer;
 
     VkPipelineLayout m_vulkanPipelineLayout;
     std::vector<VulkanShaderModule> m_shaders;

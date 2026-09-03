@@ -11,7 +11,12 @@
 class VulkanBuffer
 {
 public:
-    VulkanBuffer(const PhysicalDevice& physicalDevice, const VkDevice& device, const std::vector<Geometry::Vertex>& vertices);
+    VulkanBuffer(
+        const PhysicalDevice& physicalDevice,
+        const VkDevice& device,
+        const VkDeviceSize size,
+        const VkBufferUsageFlags usage,
+        const VkMemoryPropertyFlags properties);
 
     VulkanBuffer(VulkanBuffer& other) = delete;
     VulkanBuffer(const VulkanBuffer&) = delete;
@@ -20,8 +25,11 @@ public:
 
     ~VulkanBuffer();
 
-    const VkBuffer& getBuffer() const { return m_vertexBuffer; }
+    void copyBuffer(const VulkanBuffer& src);
 
+    const VkBuffer& getBuffer() const { return m_vertexBuffer; }
+    const VkDeviceMemory& getBufferMemory() const { return m_vertexBufferMemory; }
+    
 private:
     const PhysicalDevice& m_physicalDevice;
     const VkDevice& m_device;

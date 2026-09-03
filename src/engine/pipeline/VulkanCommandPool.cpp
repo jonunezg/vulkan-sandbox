@@ -49,6 +49,7 @@ void VulkanCommandPool::createCommandBuffer()
     }
 }
 
+//!TODO: Create a CommandBuffer base class and specialization for each type of command buffer
 void VulkanCommandPool::recordCommandBuffer(
     size_t frameIndex,
     uint32_t imageIndex,
@@ -56,7 +57,7 @@ void VulkanCommandPool::recordCommandBuffer(
     const std::vector<VkFramebuffer>& framebuffers,
     VkExtent2D swapchainExtent,
     VkPipeline pipeline,
-    const VulkanBuffer& vertexBuffer)
+    const VulkanVertexBuffer& vertexBuffer)
 {
     VkCommandBufferBeginInfo beginInfo
     {

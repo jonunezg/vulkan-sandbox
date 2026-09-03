@@ -1,7 +1,12 @@
 #include "VulkanPipelineManager.h"
 
 VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders, const std::vector<Geometry::Vertex>& vertices) :
-m_vertexBuffer { m_vulkanDeviceManager.getPhysicalDevice(), m_vulkanDeviceManager.getLogicalDevice().getDevice(), vertices }
+m_vertexBuffer
+{
+    m_vulkanDeviceManager.getPhysicalDevice(),
+    m_vulkanDeviceManager.getLogicalDevice().getDevice(),
+    m_vulkanCommandPool.getCommandPool(),
+    vertices }
 {
 
     const auto bindingDescription = Geometry::Vertex::getBindingDescription();
