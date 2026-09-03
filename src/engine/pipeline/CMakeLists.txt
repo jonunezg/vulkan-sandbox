@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 add_library(vulkan_pipeline STATIC
     ./VulkanBuffer.cpp
+    ./VulkanCommandBuffers.cpp
     ./VulkanCommandPool.cpp
     ./VulkanDynamicState.cpp
     ./VulkanFramebuffers.cpp
@@ -10,6 +11,7 @@ add_library(vulkan_pipeline STATIC
     ./VulkanShaderModule.cpp
     ./VulkanSwapchain.cpp
     ./VulkanVertexBuffer.cpp
+    ./VulkanVertexCommandBuffers.cpp
 )
 
 target_link_libraries(vulkan_pipeline vulkan_device)

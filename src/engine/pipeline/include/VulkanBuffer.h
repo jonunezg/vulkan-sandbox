@@ -25,8 +25,6 @@ public:
 
     ~VulkanBuffer();
 
-    void copyBuffer(const VulkanBuffer& src);
-
     const VkBuffer& getBuffer() const { return m_vertexBuffer; }
     const VkDeviceMemory& getBufferMemory() const { return m_vertexBufferMemory; }
     

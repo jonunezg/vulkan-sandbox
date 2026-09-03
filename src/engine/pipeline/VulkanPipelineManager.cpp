@@ -5,8 +5,15 @@ m_vertexBuffer
 {
     m_vulkanDeviceManager.getPhysicalDevice(),
     m_vulkanDeviceManager.getLogicalDevice().getDevice(),
+    m_vulkanDeviceManager.getLogicalDevice().getGraphicsQueue(),
     m_vulkanCommandPool.getCommandPool(),
-    vertices }
+    vertices
+},
+m_vertexCommandBuffers
+{
+    m_vulkanDeviceManager.getLogicalDevice().getDevice(),
+    m_vulkanCommandPool.getCommandPool()
+}
 {
 
     const auto bindingDescription = Geometry::Vertex::getBindingDescription();
@@ -209,7 +216,7 @@ bool VulkanPipelineManager::drawFrame()
 {
     const VkDevice& device = m_vulkanDeviceManager.getLogicalDevice().getDevice();
     const VkSwapchainKHR& swapchain = m_swapchain->getSwapchain();
-    const VkCommandBuffer& commandBuffer = m_vulkanCommandPool.getCommandBuffer(m_frameIndex);
+    const VkCommandBuffer& commandBuffer = m_vertexCommandBuffers.getCommandBuffer(m_frameIndex);
     const VkQueue& graphicsQueue = m_vulkanDeviceManager.getLogicalDevice().getGraphicsQueue();
     const VkQueue& presentQueue = m_vulkanDeviceManager.getLogicalDevice().getPresentQueue();
 
@@ -234,7 +241,7 @@ bool VulkanPipelineManager::drawFrame()
 
     vkResetCommandBuffer(commandBuffer, 0);
 
-    m_vulkanCommandPool.recordCommandBuffer(
+    m_vertexCommandBuffers.recordCommandBuffer(
         m_frameIndex,
         imageIndex,
         m_vulkanRenderPass->getRenderPass(),

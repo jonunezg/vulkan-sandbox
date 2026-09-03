@@ -53,15 +53,3 @@ VulkanBuffer::~VulkanBuffer()
         LOG_ENGINE_INFO("Vulkan buffer destroyed: " << m_vertexBuffer);
     }
 }
-
-void VulkanBuffer::copyBuffer(const VulkanBuffer& src)
-{
-    const VkCommandBufferAllocateInfo allocInfo
-    {
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        .pNext = nullptr,
-        // .commandPool = m_commandPool,
-        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-        .commandBufferCount = 2,
-    };
-}

@@ -7,6 +7,7 @@
 #include "VulkanFramebuffers.h"
 #include "VulkanRenderPass.h"
 #include "VulkanShaderModule.h"
+#include "VulkanVertexCommandBuffers.h"
 #include "VulkanVertexInput.h"
 
 class VulkanPipelineManager
@@ -37,6 +38,7 @@ private:
     VulkanCommandPool m_vulkanCommandPool{ m_vulkanDeviceManager.getLogicalDevice().getDevice(), m_vulkanDeviceManager.getPhysicalDevice() };
 
     VulkanVertexBuffer m_vertexBuffer;
+    VulkanVertexCommandBuffers m_vertexCommandBuffers;
 
     VkPipelineLayout m_vulkanPipelineLayout;
     std::vector<VulkanShaderModule> m_shaders;
