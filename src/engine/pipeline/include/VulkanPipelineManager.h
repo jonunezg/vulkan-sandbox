@@ -13,7 +13,10 @@
 class VulkanPipelineManager
 {
 public:
-    VulkanPipelineManager(const std::vector<Shader>& shaders, const std::vector<Geometry::Vertex>& vertices);
+    VulkanPipelineManager(
+        const std::vector<Shader>& shaders,
+        const std::vector<Geometry::Vertex>& vertices,
+        const std::optional<std::vector<uint16_t>>& indices);
     ~VulkanPipelineManager();
 
     VulkanPipelineManager(VulkanPipelineManager&) = delete;

@@ -1,13 +1,14 @@
 #include "VulkanCommandBuffers.h"
 
 VulkanCommandBuffers::VulkanCommandBuffers(const VkDevice& device, const VkCommandPool& commandPool, uint32_t commandBufferCount) :
-m_device { device }
+m_device { device },
+m_commandPool { commandPool }
 {
     VkCommandBufferAllocateInfo bufferAllocateInfo
     {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
         .pNext = nullptr,
-        .commandPool = commandPool,
+        .commandPool = m_commandPool,
         .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
         .commandBufferCount = commandBufferCount,
     };
@@ -20,4 +21,9 @@ m_device { device }
     {
         LOG_ENGINE_INFO("Vulkan command buffer created: " << commandBuffer);
     }
+}
+
+VulkanCommandBuffers::~VulkanCommandBuffers()
+{
+    vkFreeCommandBuffers(m_device, m_commandPool, m_commandBuffers.size(), m_commandBuffers.data());
 }

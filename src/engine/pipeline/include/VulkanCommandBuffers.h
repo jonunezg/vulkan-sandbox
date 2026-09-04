@@ -16,7 +16,10 @@ public:
     VulkanCommandBuffers(VulkanCommandBuffers&&) = delete;
     VulkanCommandBuffers(const VulkanCommandBuffers&&) = delete;
 
+    ~VulkanCommandBuffers();
+
 protected:
     const VkDevice& m_device;
+    const VkCommandPool& m_commandPool;
     std::vector<VkCommandBuffer> m_commandBuffers;
 };

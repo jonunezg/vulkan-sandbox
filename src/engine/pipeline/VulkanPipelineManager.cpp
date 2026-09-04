@@ -1,13 +1,14 @@
 #include "VulkanPipelineManager.h"
 
-VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders, const std::vector<Geometry::Vertex>& vertices) :
+VulkanPipelineManager::VulkanPipelineManager(const std::vector<Shader>& shaders, const std::vector<Geometry::Vertex>& vertices, const std::optional<std::vector<uint16_t>>& indices) :
 m_vertexBuffer
 {
     m_vulkanDeviceManager.getPhysicalDevice(),
     m_vulkanDeviceManager.getLogicalDevice().getDevice(),
     m_vulkanDeviceManager.getLogicalDevice().getGraphicsQueue(),
     m_vulkanCommandPool.getCommandPool(),
-    vertices
+    vertices,
+    indices
 },
 m_vertexCommandBuffers
 {

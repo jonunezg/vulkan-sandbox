@@ -39,6 +39,13 @@ void VulkanVertexCommandBuffers::recordCommandBuffer(
     VkDeviceSize offsets[] = { 0 };
     vkCmdBindVertexBuffers(m_commandBuffers[frameIndex], 0, 1, vertexBuffers, offsets);
 
+    const auto& indexBuffer = vertexBuffer.getIndexBuffer();
+    if (indexBuffer != VK_NULL_HANDLE)
+    {
+        assert(vertexBuffer.getIndexTypeSize() == 2);
+        vkCmdBindIndexBuffer(m_commandBuffers[frameIndex], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    }
+
     const VkViewport viewport
     {
         .x = 0.0f,
@@ -59,8 +66,15 @@ void VulkanVertexCommandBuffers::recordCommandBuffer(
 
     vkCmdSetScissor(m_commandBuffers[frameIndex], 0, 1, &scissor);
 
-    vkCmdDraw(m_commandBuffers[frameIndex], 3, 1, 0, 0);
-    //Future: read about instanced rendering
+    if (indexBuffer != VK_NULL_HANDLE)
+    {
+        vkCmdDrawIndexed(m_commandBuffers[frameIndex], vertexBuffer.getIndexBufferLength(), 1, 0, 0, 0);
+    }
+    else
+    {
+        //! TODO: Remove hardcoded 3
+        vkCmdDraw(m_commandBuffers[frameIndex], 3, 1, 0, 0); 
+    }
 
     vkCmdEndRenderPass(m_commandBuffers[frameIndex]);
 
